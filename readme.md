@@ -23,3 +23,50 @@ Vivemos um momento em que ferramentas de IA generativa são cada vez mais capaze
 
 > **Usar IA para acelerar o entendimento é diferente de usar IA para evitar o entendimento.**
 
+# FUNCIONALIDADES
+
+## 1. Área logada do mentor.
+
+O mentor terá uma área exclusiva para gerenciar sua atuação na plataforma.
+
+Principais funcionalidades:
+
+- Perfil de mentor: nome, curso, período, áreas de conhecimento, descrição e experiência.
+
+- Disponibilidade: definição dos dias e horários em que está disponível para realizar mentorias.
+
+- Agenda: visualização das mentorias agendadas, próximas sessões e histórico.
+
+- Solicitações de mentoria: visualizar, aceitar ou recusar solicitações de mentorandos.
+
+- Histórico de sessões: registro das mentorias realizadas.
+
+- Avaliações: acompanhamento das avaliações recebidas após as sessões.
+
+- Notificações: avisos sobre novas solicitações, alterações e cancelamentos.
+
+- Gerenciamento de materiais: possibilidade de disponibilizar materiais complementares para os mentorandos.
+
+## 2. Área logada do mentorando.
+
+O mentorando terá um espaço personalizado para encontrar mentores e acompanhar sua jornada.
+
+Principais funcionalidades:
+
+- Perfil do mentorando: curso, período e áreas nas quais busca orientação.
+
+- Busca de mentores: encontrar mentores por área de conhecimento, curso, período e avaliação.
+
+- Perfil detalhado do mentor: visualizar informações, especialidades, avaliações e horários disponíveis.
+
+- Solicitação de mentoria: escolher um mentor e solicitar uma sessão.
+
+- Minhas mentorias: visualizar sessões futuras, realizadas e canceladas.
+
+- Histórico: acompanhar as mentorias que já realizou.
+
+- Avaliação da sessão: avaliar a experiência após cada mentoria.
+
+- Favoritos: salvar mentores para consultar posteriormente.
+
+- Notificações: receber lembretes e atualizações sobre suas mentorias.
