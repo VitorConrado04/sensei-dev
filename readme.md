@@ -111,3 +111,16 @@ Critérios:
 - Experiência geral.
 - Também seria interessante permitir uma avaliação textual.
 
+## 5. Objetivo da mentoria
+Antes de agendar, o mentorando informa:
+
+"O que você deseja aprender nesta sessão?"
+
+Por exemplo:
+
+- Entender ponteiros em C;
+- Revisar orientação a objetos;
+- Tirar dúvidas sobre banco de dados;
+- Entender um erro no código;
+- Preparar-se para uma prova;
+- Orientação sobre carreira.
