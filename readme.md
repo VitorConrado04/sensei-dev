@@ -70,3 +70,44 @@ Principais funcionalidades:
 - Favoritos: salvar mentores para consultar posteriormente.
 
 - Notificações: receber lembretes e atualizações sobre suas mentorias.
+
+## 3. Agenda para marcação de mentorias
+
+A agenda é uma das funcionalidades centrais da plataforma.
+
+O mentor define previamente seus horários disponíveis, enquanto o mentorando visualiza apenas os horários livres e escolhe aquele que melhor atende à sua necessidade.
+
+O app seguira o seguinte fluxo:
+
+Mentor define disponibilidade → Mentorando escolhe horário → Solicitação é criada → Mentor confirma → Sessão é agendada
+
+A agenda deve permitir:
+
+- Visualização por dia, semana e mês.
+- Definição de horários disponíveis pelo mentor.
+- Bloqueio de horários indisponíveis.
+- Escolha da duração da sessão.
+- Agendamento e cancelamento.
+- Reagendamento.
+- Confirmação automática da sessão, caso essa seja a regra adotada.
+- Lembretes antes da mentoria.
+- Histórico de horários ocupados e sessões realizadas.
+- Impedir conflitos de horário.
+
+## 4. Sistema de avaliações e reputação
+
+Depois de cada sessão, o mentorando poderá avaliar o mentor.
+
+Exemplo:
+
+Nota: ⭐ 4,8/5
+
+Critérios:
+
+- Clareza da explicação.
+- Domínio do assunto.
+- Pontualidade.
+- Capacidade de orientar o raciocínio;
+- Experiência geral.
+- Também seria interessante permitir uma avaliação textual.
+
