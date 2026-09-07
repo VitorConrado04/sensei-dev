@@ -1,0 +1,135 @@
+// sensei.dev modelo relacional
+// Etapa 1: entidades + atributos + PK, sem relacionamentos ainda.
+// As tabelas de junção (mentor_disciplina, mentorando_disciplina_interesse,
+// favorito) entram na próxima etapa, junto com as FKs e as N:N.
+
+// sensei.dev — modelo relacional
+// Etapa 2: relacionamentos, FKs e explosão das N:N em tabelas associativas.
+
+Table usuario {
+  id int [pk]
+  nome varchar
+  email varchar
+  senha varchar
+  semestre_atual int
+  foto_url varchar
+  status varchar
+  criado_em timestamp
+}
+
+Table disciplina {
+  id int [pk]
+  nome varchar
+  semestre int
+}
+
+// --- Herança 1:1: o próprio id é PK e FK para usuario ---
+
+Table mentor_perfil {
+  id int [pk, ref: > usuario.id]
+  descricao varchar
+  experiencia varchar
+  nota_media decimal
+  total_mentorias int
+}
+
+Table mentorando_perfil {
+  id int [pk, ref: > usuario.id]
+  criado_em timestamp
+}
+
+// --- N:N explodidas ---
+
+Table mentor_disciplina {
+  mentor_id int [ref: > mentor_perfil.id]
+  disciplina_id int [ref: > disciplina.id]
+  Indexes {
+    (mentor_id, disciplina_id) [pk]
+  }
+}
+
+Table mentorando_disciplina_interesse {
+  mentorando_id int [ref: > mentorando_perfil.id]
+  disciplina_id int [ref: > disciplina.id]
+  Indexes {
+    (mentorando_id, disciplina_id) [pk]
+  }
+}
+
+Table favorito {
+  mentorando_id int [ref: > mentorando_perfil.id]
+  mentor_id int [ref: > mentor_perfil.id]
+  criado_em timestamp
+  Indexes {
+    (mentorando_id, mentor_id) [pk]
+  }
+}
+
+// --- Agenda: 1:N a partir do mentor ---
+
+Table disponibilidade {
+  id int [pk]
+  mentor_id int [ref: > mentor_perfil.id]
+  dia_semana int
+  hora_inicio varchar
+  hora_fim varchar
+  ativo boolean
+}
+
+Table bloqueio_horario {
+  id int [pk]
+  mentor_id int [ref: > mentor_perfil.id]
+  data date
+  hora_inicio varchar
+  hora_fim varchar
+  motivo varchar
+}
+
+// --- mentoria: liga mentor + mentorando + disciplina (ternária resolvida como entidade) ---
+
+Table mentoria {
+  id int [pk]
+  mentor_id int [ref: > mentor_perfil.id]
+  mentorando_id int [ref: > mentorando_perfil.id]
+  disciplina_id int [ref: > disciplina.id]
+  mentoria_origem_id int [ref: > mentoria.id]
+  objetivo varchar
+  data_hora_inicio timestamp
+  data_hora_fim timestamp
+  status varchar
+  criado_em timestamp
+  atualizado_em timestamp
+}
+
+Table avaliacao {
+  id int [pk]
+  mentoria_id int [unique, ref: > mentoria.id]
+  clareza int
+  dominio_assunto int
+  pontualidade int
+  capacidade_orientar int
+  experiencia_geral int
+  nota_final decimal
+  comentario varchar
+  criado_em timestamp
+}
+
+Table material {
+  id int [pk]
+  mentor_id int [ref: > mentor_perfil.id]
+  mentoria_id int [ref: > mentoria.id]
+  titulo varchar
+  descricao varchar
+  arquivo_url varchar
+  criado_em timestamp
+}
+
+Table notificacao {
+  id int [pk]
+  usuario_id int [ref: > usuario.id]
+  mentoria_id int [ref: > mentoria.id]
+  tipo varchar
+  mensagem varchar
+  lida boolean
+  criado_em timestamp
+}

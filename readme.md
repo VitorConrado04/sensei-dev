@@ -124,3 +124,44 @@ Por exemplo:
 - Entender um erro no código;
 - Preparar-se para uma prova;
 - Orientação sobre carreira.
+
+## 6 . Modelagem do banco de dados
+
+O modelo relacional completo está descrito em DBML na pasta [`escopo_db`](./escopo_db):
+
+- **`banco_relacional.dbml`** — definição de todas as tabelas, atributos, chaves primárias/estrangeiras e relacionamentos.
+- **`banco_relacional.sql`** — script SQL (PostgreSQL) gerado automaticamente a partir do `.dbml`, pronto pra referência ou adaptação quando formos utilizar o H2.
+
+### Como visualizar o diagrama 
+
+O arquivo `.dbml` não é só texto — ele pode ser visualizado como diagrama em tempo real:
+
+1. Instale a extensão **DBML** no VSCode (busque por "dbml" na aba de extensões).
+2. Abra o arquivo `escopo_db/banco_relacional.dbml`.
+3. Use `Ctrl+Shift+P` → **"DBML: Preview"** (ou o ícone de preview no canto superior direito do editor).
+4. O diagrama abre em uma aba ao lado e se atualiza automaticamente conforme o arquivo é editado.
+
+### Visão geral das tabelas (13)
+
+**Usuários e perfis**
+- `usuario` — dados base de todo cadastrado (nome, email, senha, semestre, status)
+- `mentor_perfil` — extensão 1:1 de quem atua como mentor (descrição, experiência, nota média)
+- `mentorando_perfil` — extensão 1:1 de quem atua como mentorando
+
+**Disciplinas**
+- `disciplina` — disciplinas da grade do curso, por semestre
+- `mentor_disciplina` — quais disciplinas cada mentor domina (N:N)
+- `mentorando_disciplina_interesse` — quais disciplinas cada mentorando busca ajuda (N:N)
+
+**Agenda**
+- `disponibilidade` — horários recorrentes livres do mentor
+- `bloqueio_horario` — exceções pontuais de indisponibilidade
+
+**Sessões**
+- `mentoria` — a solicitação/sessão em si (mentor, mentorando, disciplina, objetivo, data/hora, status)
+- `avaliacao` — avaliação pós-sessão por critério (clareza, domínio, pontualidade, capacidade de orientar, experiência geral)
+
+**Complementos**
+- `material` — arquivos disponibilizados pelo mentor, gerais ou vinculados a uma sessão
+- `notificacao` — avisos de novas solicitações, confirmações e cancelamentos
+- `favorito` — mentores salvos por um mentorando (N:N)
