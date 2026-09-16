@@ -165,3 +165,6 @@ O arquivo `.dbml` não é só texto — ele pode ser visualizado como diagrama e
 - `material` — arquivos disponibilizados pelo mentor, gerais ou vinculados a uma sessão
 - `notificacao` — avisos de novas solicitações, confirmações e cancelamentos
 - `favorito` — mentores salvos por um mentorando (N:N)
+
+### MER (modelo conceitual completo)
+![MER completo](escopo_db/mer.png)
