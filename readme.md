@@ -168,3 +168,52 @@ O arquivo `.dbml` não é só texto — ele pode ser visualizado como diagrama e
 
 ### MER (modelo conceitual completo)
 ![MER completo](escopo_db/mer.png)
+
+## 7. Telas do protótipo
+
+![Cadastro de mentor](imagens/Area%20Cadastro%20Mentor.png)
+Formulário de cadastro específico para quem entra como mentor.
+
+![Cadastro de mentorando](imagens/Area%20Cadastro%20Mentorado.png)
+
+Formulário de cadastro específico para quem entra como mentorando.
+
+![Área de login](imagens/Area%20Login.png)
+
+Tela de login, compartilhada entre mentores e mentorandos.
+
+![Avaliações do mentor](imagens/Avalia%C3%A7%C3%A3oMentor.png)
+
+Histórico de avaliações e seus respectivos atríbutos,  recebidas pelo mentor após as sessões.
+
+![Início do mentor](imagens/InicioMentor.png)
+
+Dashboard inicial do mentor, com visão geral da agenda e atividades.
+
+![Materiais do mentor](imagens/MateriaisMentor.png)
+
+Gerenciamento dos materiais complementares disponibilizados pelo mentor.
+
+![Página inicial](imagens/pagina_inicial.sensei-dev.png)
+
+Tela de entrada da plataforma, onde o usuário escolhe se quer acessar como mentor ou como mentorando.
+
+![Perfil do mentor](imagens/PerfilMentor.png)
+
+Tela de perfil do mentor, com descrição, experiência e disciplinas que domina.
+
+![Início do mentorando](imagens/Tela%20Inicio%20Mentorado.png)
+
+Dashboard inicial do mentorando.
+
+![Mentorias do mentorando](imagens/Tela%20Mentorias%20Mentorado.png)
+
+Sessões futuras, realizadas e canceladas do mentorando.
+
+![Notificações do mentorando](imagens/Tela%20Notifica%C3%A7%C3%B5es%20Mentorado.png)
+
+Central de notificações e lembretes do mentorando.
+
+![Perfil do mentorando](imagens/Tela%20Perfil%20Mentorado.png)
+
+Tela de perfil do mentorando, com disciplinas de interesse.
