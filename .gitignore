@@ -1,0 +1,22 @@
+# ===== Maven =====
+# Pasta gerada pelo Maven ao compilar (classes, .war, arquivos do Tomcat).
+# Pode ser refeita a qualquer momento, então não precisa ir pro Git.
+target/
+
+# ===== IntelliJ IDEA =====
+# Pasta de saída do próprio IntelliJ (o "Compiler output" do Project Structure).
+out/
+
+# Configurações do IntelliJ neste projeto. Têm caminhos pessoais
+# (ex.: C:\Users\...) e dariam conflito entre os integrantes do grupo.
+.idea/
+
+# Arquivos de módulo do IntelliJ (mesma ideia do .idea/).
+*.iml
+
+# ===== H2 =====
+# Log de erros do H2 (ex.: o erro do DbStarter ao parar o Tomcat). É só diagnóstico local.
+*.trace.db
+
+# Arquivo temporário de trava do H2.
+*.lock.db

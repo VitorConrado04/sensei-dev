@@ -217,3 +217,31 @@ Central de notificações e lembretes do mentorando.
 ![Perfil do mentorando](imagens/Tela%20Perfil%20Mentorado.png)
 
 Tela de perfil do mentorando, com disciplinas de interesse.
+
+## 8. Ambiente de desenvolvimento (primeira parte do Marco 2)
+
+### Tecnologias
+- Java 11 e Maven
+- Servlets, JSP e JSTL (sem framework) e JDBC puro
+- Tomcat 7 embutido (plugin `tomcat7-maven-plugin`)
+- Banco H2 2.1.214 em arquivo, versionado no repositório
+
+### Estrutura do projeto
+- `pom.xml`: dependências e plugins do Maven
+- `src/main/java/br/com/senseidev/`: pacotes `dao`, `model` e `servlet`
+- `src/main/webapp/`: páginas JSP/HTML, `css`, `js`, `img` e `WEB-INF/web.xml`
+- `db/sensei.mv.db`: banco H2 com as 13 tabelas, sem dados
+- `escopo_db/`: DBML, SQL do PostgreSQL, SQL do H2 (`banco_h2.sql`) e MER
+- `imagens/`: protótipos
+
+### Banco de dados
+O arquivo `db/sensei.mv.db` contém as 13 tabelas do modelo e nenhum dado. Ele foi
+criado a partir de `escopo_db/banco_h2.sql`, que é a adaptação do `banco_relacional.sql` (PostgreSQL) para o H2. A conexão é aberta pelo `DbStarter`,
+configurado no `web.xml` (URL `jdbc:h2:./db/sensei`, usuário `sa`, senha `sa`).
+
+### Como executar
+1. Abrir o projeto no IntelliJ com JDK 11.
+2. No painel Maven, executar `tomcat7:run` (ou `mvn tomcat7:run` na raiz do projeto).
+3. Aplicação: http://localhost:8080
+4. Console do H2: http://localhost:8080/console (driver `org.h2.Driver`, URL `jdbc:h2:./db/sensei`, usuário `sa`, senha `sa`). 
+5. O console abre com `jdbc:h2:~/test` preenchido, então é preciso trocar a URL
