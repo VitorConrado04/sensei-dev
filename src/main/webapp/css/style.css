@@ -1,0 +1,275 @@
+:root {
+    --bg-escuro: #1e1c22;
+    --campo: #dcdcdc;
+    --campo-texto: #7a7a7a;
+    --roxo: #6a4fa5;
+    --roxo-hover: #59418b;
+    --texto: #111;
+    --fonte-titulo: "Bruno Ace", "Segoe UI", sans-serif;
+    --fonte-corpo: "Asap", "Segoe UI", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+    font-family: var(--fonte-corpo);
+    color: var(--texto);
+    background: #fff;
+}
+
+.pagina {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+}
+
+/* ---------- Painel esquerdo ---------- */
+.painel-marca {
+    background: var(--bg-escuro);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    font-family: var(--fonte-titulo);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 3.2vw, 3.2rem);
+    letter-spacing: 0.04em;
+    color: #fff;
+}
+
+/* ---------- Painel direito ---------- */
+.painel-form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5rem 2rem 2.5rem;
+}
+
+.link-login {
+    position: absolute;
+    top: 1.2rem;
+    right: 2rem;
+    font-size: 1rem;
+    color: var(--texto);
+}
+
+.link-login a { color: inherit; text-decoration: none; }
+.link-login a:hover,
+.link-login a:focus-visible { text-decoration: underline; }
+
+h1 {
+    font-family: var(--fonte-titulo);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 2.6vw, 2.6rem);
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+form {
+    width: 100%;
+    max-width: 640px;
+}
+
+.grupo { margin-bottom: 1.6rem; }
+
+label {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.45rem;
+}
+
+/* ---------- Campos (input e select compartilham o visual de pílula) ---------- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    height: 48px;
+    padding: 0 1.2rem;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-color: var(--campo);
+    font: inherit;
+    color: var(--texto);
+}
+
+input:focus-visible,
+select:focus-visible {
+    outline: none;
+    border-color: var(--roxo);
+    background-color: #e8e8e8;
+}
+
+/* Select: troca a setinha nativa por uma própria */
+select {
+    padding-right: 2.6rem;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a7a7a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 18px;
+}
+
+/* "Selecione" fica cinza até escolher um semestre */
+select:invalid { color: var(--campo-texto); }
+select option { color: var(--texto); }
+
+.erro-senha {
+    display: none;
+    margin-top: 0.4rem;
+    padding-left: 1.2rem;
+    font-size: 0.9rem;
+    color: #b3261e;
+}
+.erro-senha.visivel { display: block; }
+
+/* ---------- Linha: foto de perfil + semestre (sempre lado a lado) ---------- */
+.linha-dupla {
+    display: grid;
+    grid-template-columns: auto 1fr;   /* col 1 = foto, col 2 = semestre */
+    column-gap: 2rem;
+    align-items: start;
+}
+
+.linha-dupla .upload { margin-top: 0; }
+
+.linha-dupla .grupo-semestre {
+    margin-bottom: 0;
+    min-width: 0;                      /* deixa a coluna 1fr encolher sem estourar */
+}
+
+/* ---------- Upload de foto ---------- */
+.upload { margin-top: 2.2rem; }
+
+.upload-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    width: 260px;
+    height: 260px;
+    border-radius: 22px;
+    background: var(--campo);
+    color: var(--campo-texto);
+    text-align: center;
+    padding: 1.2rem;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.upload-area:focus-within { outline: 2px solid var(--roxo); outline-offset: 2px; }
+
+.upload-area svg { width: 110px; height: 110px; fill: #999; }
+.upload-area p { font-size: 1rem; line-height: 1.25; }
+
+.upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.upload-area img.previa {
+    display: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.upload-area.com-imagem img.previa { display: block; }
+
+/* ---------- Rodapé do formulário ---------- */
+.acoes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.link-aluno {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-size: 1.7rem;
+    color: var(--texto);
+    text-decoration: none;
+}
+.link-aluno svg { width: 36px; height: 24px; }
+.link-aluno:hover,
+.link-aluno:focus-visible { text-decoration: underline; }
+
+.btn-cadastrar {
+    font-family: var(--fonte-titulo);
+    font-size: 1.15rem;
+    color: #fff;
+    background: var(--roxo);
+    border: none;
+    border-radius: 10px;
+    padding: 1.6rem 2.6rem;
+    cursor: pointer;
+}
+.btn-cadastrar:hover,
+.btn-cadastrar:focus-visible { background: var(--roxo-hover); }
+
+/* ---------- Responsivo (SEMPRE por último: os overrides precisam vir depois das regras base) ---------- */
+@media (max-width: 900px) {
+    .pagina { grid-template-columns: 1fr; }
+    .painel-marca { min-height: 160px; }
+    .painel-form { padding-top: 4.5rem; }
+    .upload-area { width: 200px; height: 200px; }
+    .link-aluno { font-size: 1.3rem; }
+    .btn-cadastrar { padding: 1.1rem 1.8rem; }
+}
+
+@media (min-width: 901px) {
+    .painel-form { padding: 3rem 2rem 1.5rem; }
+
+    h1 {
+        font-size: clamp(1.4rem, 2vw, 2rem);
+        margin-bottom: 1.5rem;
+    }
+
+    form { max-width: 560px; }
+
+    .grupo { margin-bottom: 3rem; }
+
+    label {
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select { height: 40px; }
+
+    .linha-dupla { column-gap: 1.5rem; }
+
+    .upload { margin-top: 1rem; }
+
+    .upload-area {
+        width: 180px;
+        height: 180px;
+        gap: 0.5rem;
+    }
+    .upload-area svg { width: 70px; height: 70px; }
+    .upload-area p { font-size: 0.85rem; }
+
+    .acoes { margin-top: 1rem; }
+    .link-aluno { font-size: 1.2rem; }
+
+    .btn-cadastrar {
+        font-size: 1rem;
+        padding: 1rem 2rem;
+    }
+}

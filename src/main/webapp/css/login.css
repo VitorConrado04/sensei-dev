@@ -1,0 +1,132 @@
+:root {
+    --bg-escuro: #1e1c22;
+    --campo: #dcdcdc;
+    --roxo: #6a4fa5;
+    --roxo-hover: #59418b;
+    --texto-claro: #f2f2f2;
+    --fonte-titulo: "Bruno Ace", "Segoe UI", sans-serif;
+    --fonte-corpo: "Asap", "Segoe UI", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+    font-family: var(--fonte-corpo);
+    color: var(--texto-claro);
+    /* fundo escuro com um "texturizado" leve, tipo o do protótipo */
+    background:
+            radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.04), transparent 45%),
+            radial-gradient(circle at 80% 85%, rgba(106, 79, 165, 0.08), transparent 50%),
+            var(--bg-escuro);
+}
+
+/* ---------- Estrutura: logo em cima, form no meio, redes embaixo ---------- */
+.tela-login {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 1.5rem 2rem;
+}
+
+.logo {
+    font-family: var(--fonte-titulo);
+    font-weight: 400;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    letter-spacing: 0.04em;
+    color: #fff;
+}
+
+/* ---------- Formulário ---------- */
+form {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.grupo {
+    width: 100%;
+    margin-bottom: 2.4rem;
+}
+
+label {
+    display: block;
+    font-family: var(--fonte-titulo);
+    font-size: 0.85rem;
+    margin: 0 0 0.6rem 0.7rem;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    height: 34px;
+    padding: 0 1rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: var(--campo);
+    font: inherit;
+    color: #111;
+}
+
+input:focus-visible {
+    outline: none;
+    border-color: var(--roxo);
+    background: #e8e8e8;
+}
+
+.erro {
+    display: none;
+    width: 100%;
+    margin: -1rem 0 1rem 0.7rem;
+    font-size: 0.9rem;
+    color: #ff8a80;
+}
+.erro.visivel { display: block; }
+
+/* ---------- Botão ---------- */
+.btn-entrar {
+    margin-top: 3.2rem;
+    width: 148px;
+    height: 58px;
+    font-family: var(--fonte-titulo);
+    font-size: 0.9rem;
+    color: #fff;
+    background: var(--roxo);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.btn-entrar:hover,
+.btn-entrar:focus-visible {
+    background: var(--roxo-hover);
+    outline: none;
+}
+
+/* ---------- Redes sociais (grudadas no rodapé) ---------- */
+.redes {
+    margin-top: auto;
+    padding-top: 3rem;
+    display: flex;
+    gap: 1.4rem;
+}
+
+.redes a {
+    color: #fff;
+    display: inline-flex;
+    opacity: 0.9;
+}
+.redes a:hover,
+.redes a:focus-visible { opacity: 1; transform: translateY(-2px); }
+
+.redes svg { width: 18px; height: 18px; }
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 600px) {
+    .tela-login { padding-top: 2.5rem; }
+    form { margin-top: 3.5rem; }
+}
