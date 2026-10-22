@@ -36,6 +36,7 @@ public class CadastroMentorandoServlet extends HttpServlet {
         // Entregar ao DAO, que faz o INSERT no banco
         UsuarioDao usuarioDao = new UsuarioDao();
         usuarioDao.createUsuario(mentorando);
+        usuarioDao.createMentorandoPerfil(email);
 
         // Depois de cadastrar, manda o usuario para a tela de login
         // Usei o redirect (e nao forward):porque o navegador abre uma nova pagina (/LoginArea.jsp).
