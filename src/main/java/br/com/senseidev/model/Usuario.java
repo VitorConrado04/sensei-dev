@@ -4,7 +4,7 @@ package br.com.senseidev.model;
 import java.time.LocalDateTime;
 
 public abstract class Usuario {
-
+    private String tipo;
     private Integer id;
     private String nome;
     private String email;
@@ -39,6 +39,7 @@ public abstract class Usuario {
     }
 
     // os get e os set
+    // só os get
 
     public Integer getId() {
         return id;
@@ -72,7 +73,10 @@ public abstract class Usuario {
         return criadoEm;
     }
 
+    public String getTipo() { return tipo;}
 
+
+    // só os set
     public void setId(Integer id) {
         this.id = id;
     }
@@ -104,4 +108,6 @@ public abstract class Usuario {
     public void setCriadoEm(LocalDateTime criadoEm) {
         this.criadoEm = criadoEm;
     }
+
+    public void setTipo(String tipo){this.tipo = tipo;}
 }

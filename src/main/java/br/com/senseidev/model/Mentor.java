@@ -14,6 +14,7 @@ public class Mentor extends Usuario {
                   String experiencia) {
 
         super(nome, email, senhaHash, semestreAtual, fotoUrl);
+        setTipo("MENTOR");
 
         this.descricao = descricao;
         this.experiencia = experiencia;

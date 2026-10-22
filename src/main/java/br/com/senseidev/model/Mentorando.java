@@ -9,5 +9,6 @@ public class Mentorando extends Usuario {
                       String fotoUrl) {
 
         super(nome, email, senhaHash, semestreAtual, fotoUrl);
+        setTipo("MENTORANDO");
     }
 }

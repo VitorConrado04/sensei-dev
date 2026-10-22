@@ -29,7 +29,7 @@
         <h1>Preencha seus dados</h1>
 
         <form id="form-cadastro"
-              action="${pageContext.request.contextPath}/CadastroAluno.jsp"
+              action="${pageContext.request.contextPath}/cadastro-mentorando"
               method="post" enctype="multipart/form-data" novalidate>
 
             <div class="grupo">
