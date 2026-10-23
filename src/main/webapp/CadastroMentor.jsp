@@ -21,6 +21,7 @@
         </p>
 
         <h1>Preencha seus dados</h1>
+        <p>${erro}</p>
 
         <!-- Troque o action pelo seu Servlet (ex.: @WebServlet("/cadastro-mentor")) -->
         <form id="form-cadastro" action="${pageContext.request.contextPath}/cadastro-mentor"
