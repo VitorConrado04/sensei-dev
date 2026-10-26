@@ -1,3 +1,4 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -92,7 +93,9 @@
                     </svg>
                 </a>
 
-                <button type="submit" class="btn-cadastrar">Cadastre-se</button>
+                <button type="submit" class="btn-cadastrar" >
+                Cadastre-se
+                </button>
             </div>
         </form>
     </section>
@@ -139,6 +142,7 @@
         }
 
         if (!ok) e.preventDefault();
+
     });
 </script>
 </body>
