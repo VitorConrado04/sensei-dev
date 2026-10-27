@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,6 +23,23 @@
                 Crie sua conta!
                 <a href="${pageContext.request.contextPath}/CadastroAluno.jsp">Cadastre-se</a>
             </p>
+
+    <c:if test="${param.cadastro == 'sucesso'}">
+        <p class="mensagem" role="status">Cadastro concluído! Entre com seu e-mail e senha.</p>
+    </c:if>
+    <c:if test="${param.saiu == '1'}">
+        <p class="mensagem" role="status">Você saiu da sua conta.</p>
+    </c:if>
+    <c:if test="${not empty param.erro}">
+        <p class="erro visivel" role="alert">
+            <c:choose>
+                <c:when test="${param.erro == 'campos'}">Preencha e-mail e senha.</c:when>
+                <c:when test="${param.erro == 'credenciais'}">E-mail ou senha incorretos.</c:when>
+                <c:when test="${param.erro == 'sessao'}">Entre novamente para acessar essa página.</c:when>
+                <c:otherwise>Não foi possível acessar o banco de dados. Tente novamente.</c:otherwise>
+            </c:choose>
+        </p>
+    </c:if>
 
     <form id="form-login" action="${pageContext.request.contextPath}/login"
           method="post" novalidate>

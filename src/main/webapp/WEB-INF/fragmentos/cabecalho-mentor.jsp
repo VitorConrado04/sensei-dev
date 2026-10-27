@@ -31,6 +31,7 @@
         <a class="aba" href="${ctx}/mentor-material" <c:if test="${param.aba == 'material'}">aria-current="page"</c:if>>Material</a>
         <a class="aba" href="${ctx}/mentor-avaliacao" <c:if test="${param.aba == 'avaliacao'}">aria-current="page"</c:if>>Avaliação</a>
         <a class="aba" href="${ctx}/mentor-perfil" <c:if test="${param.aba == 'perfil'}">aria-current="page"</c:if>>Perfil</a>
+        <a class="aba" href="${ctx}/logout">Sair</a>
     </nav>
 
     <a class="logo" href="${ctx}/mentor-inicio">SENSEI.DEV</a>

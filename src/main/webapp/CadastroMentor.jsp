@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -20,31 +21,57 @@
             Você já tem uma conta? <a href="${pageContext.request.contextPath}/LoginArea.jsp">Faça Log In</a>
         </p>
 
-        <h1>Preencha seus dados</h1>
+        <h1>Cadastro de mentor</h1>
 
-        <!-- Troque o action pelo seu Servlet (ex.: @WebServlet("/cadastro-mentor")) -->
+        <c:if test="${not empty param.erro}">
+            <p role="alert" style="color:#b3261e;margin:0 0 1rem;width:100%;">
+                <c:choose>
+                    <c:when test="${param.erro == 'dados'}">Confira os campos. A senha deve ter pelo menos 8 caracteres, as senhas devem coincidir e o semestre deve ser selecionado.</c:when>
+                    <c:when test="${param.erro == 'email'}">Esse e-mail já está cadastrado.</c:when>
+                    <c:when test="${param.erro == 'foto'}">A foto deve ser PNG ou JPG e ter no máximo 2 MB.</c:when>
+                    <c:otherwise>Não foi possível concluir o cadastro. Tente novamente.</c:otherwise>
+                </c:choose>
+            </p>
+        </c:if>
+
         <form id="form-cadastro" action="${pageContext.request.contextPath}/cadastro-mentor"
               method="post" enctype="multipart/form-data" novalidate>
 
             <div class="grupo">
                 <label for="nome">Digite seu nome:</label>
-                <input type="text" id="nome" name="nome" required autocomplete="name">
+                <input type="text" id="nome" name="nome" maxlength="150" required autocomplete="name">
             </div>
 
             <div class="grupo">
                 <label for="email">E-Mail:</label>
-                <input type="email" id="email" name="email" required autocomplete="email">
+                <input type="email" id="email" name="email" maxlength="150" required autocomplete="email">
             </div>
 
             <div class="grupo">
                 <label for="senha">Senha:</label>
-                <input type="password" id="senha" name="senha" required minlength="6" autocomplete="new-password">
+                <input type="password" id="senha" name="senha" required minlength="8" autocomplete="new-password">
             </div>
 
             <div class="grupo">
                 <label for="confirmarSenha">Confirmar senha:</label>
                 <input type="password" id="confirmarSenha" name="confirmarSenha" required autocomplete="new-password">
-                <p class="erro-senha" id="erro-senha" role="alert">As senhas não coincidem.</p>
+                <p class="erro-senha" id="erro-senha" role="alert">A senha deve ter pelo menos 8 caracteres e as senhas precisam coincidir.</p>
+            </div>
+
+            <div class="grupo">
+                <label for="semestre">Semestre atual:</label>
+                <select id="semestre" name="semestre" required>
+                    <option value="" disabled selected>Selecione</option>
+                    <option value="1">1º semestre</option>
+                    <option value="2">2º semestre</option>
+                    <option value="3">3º semestre</option>
+                    <option value="4">4º semestre</option>
+                    <option value="5">5º semestre</option>
+                    <option value="6">6º semestre</option>
+                    <option value="7">7º semestre</option>
+                    <option value="8">8º semestre</option>
+                </select>
+                <p class="erro-senha" id="erro-semestre">Selecione seu semestre.</p>
             </div>
 
             <div class="upload">
@@ -77,20 +104,30 @@
     const form = document.getElementById('form-cadastro');
     const senha = document.getElementById('senha');
     const confirmar = document.getElementById('confirmarSenha');
+    const semestre = document.getElementById('semestre');
     const erro = document.getElementById('erro-senha');
+    const erroSemestre = document.getElementById('erro-semestre');
     const foto = document.getElementById('foto');
     const area = document.getElementById('upload-area');
     const previa = document.getElementById('previa');
 
     // Valida se as senhas coincidem antes de enviar
     form.addEventListener('submit', (e) => {
-        if (senha.value !== confirmar.value) {
+        if (senha.value.length < 8 || senha.value !== confirmar.value || !semestre.value) {
             e.preventDefault();
-            erro.classList.add('visivel');
-            confirmar.focus();
+            erro.classList.toggle('visivel', senha.value.length < 8 || senha.value !== confirmar.value);
+            erroSemestre.classList.toggle('visivel', !semestre.value);
+            if (senha.value.length < 8) senha.focus();
+            else if (senha.value !== confirmar.value) confirmar.focus();
+            else semestre.focus();
         } else {
             erro.classList.remove('visivel');
+            erroSemestre.classList.remove('visivel');
         }
+    });
+
+    semestre.addEventListener('change', () => {
+        if (semestre.value) erroSemestre.classList.remove('visivel');
     });
 
     confirmar.addEventListener('input', () => {

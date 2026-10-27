@@ -87,6 +87,7 @@ input:focus-visible {
     color: #ff8a80;
 }
 .erro.visivel { display: block; }
+.mensagem { width:100%; max-width:400px; margin: 1.2rem 0 -3.5rem; color:#b7f0c0; text-align:center; line-height:1.4; }
 
 /* ---------- Botão ---------- */
 .btn-entrar {

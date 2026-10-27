@@ -1,5 +1,4 @@
-<html>
-<body>
-<h2>Sensei.dev está só começando...</h2>
-</body>
-</html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    response.sendRedirect(request.getContextPath() + "/LoginArea.jsp");
+%>

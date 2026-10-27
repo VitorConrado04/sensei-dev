@@ -21,6 +21,9 @@
   <listener>
     <listener-class>org.h2.server.web.DbStarter</listener-class>
   </listener>
+  <listener>
+    <listener-class>br.com.senseidev.listener.InicializadorBanco</listener-class>
+  </listener>
 
   <servlet>
     <servlet-name>H2Console</servlet-name>

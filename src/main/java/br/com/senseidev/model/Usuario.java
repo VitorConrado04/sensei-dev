@@ -1,4 +1,3 @@
-
 package br.com.senseidev.model;
 
 import java.time.LocalDateTime;

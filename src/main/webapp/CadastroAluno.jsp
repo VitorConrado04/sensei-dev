@@ -1,5 +1,5 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -27,31 +27,42 @@
             <a href="${pageContext.request.contextPath}/LoginArea.jsp">Faça Log In</a>
         </p>
 
-        <h1>Preencha seus dados</h1>
+        <h1>Cadastro de mentorando</h1>
+
+        <c:if test="${not empty param.erro}">
+            <p role="alert" style="color:#b3261e;margin:0 0 1rem;width:100%;">
+                <c:choose>
+                    <c:when test="${param.erro == 'dados'}">Confira os campos. A senha deve ter pelo menos 8 caracteres, as senhas devem coincidir e o semestre deve ser selecionado.</c:when>
+                    <c:when test="${param.erro == 'email'}">Esse e-mail já está cadastrado.</c:when>
+                    <c:when test="${param.erro == 'foto'}">A foto deve ser PNG ou JPG e ter no máximo 2 MB.</c:when>
+                    <c:otherwise>Não foi possível concluir o cadastro. Tente novamente.</c:otherwise>
+                </c:choose>
+            </p>
+        </c:if>
 
         <form id="form-cadastro"
-              action="${pageContext.request.contextPath}/CadastroAluno.jsp"
+              action="${pageContext.request.contextPath}/cadastro-aluno"
               method="post" enctype="multipart/form-data" novalidate>
 
             <div class="grupo">
                 <label for="nome">Digite seu nome:</label>
-                <input type="text" id="nome" name="nome" required>
+                <input type="text" id="nome" name="nome" maxlength="150" required>
             </div>
 
             <div class="grupo">
                 <label for="email">E-Mail:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" maxlength="150" required>
             </div>
 
             <div class="grupo">
                 <label for="senha">Senha:</label>
-                <input type="password" id="senha" name="senha" required>
+                <input type="password" id="senha" name="senha" required minlength="8">
             </div>
 
             <div class="grupo">
                 <label for="confirmar-senha">Confirmar senha:</label>
-                <input type="password" id="confirmar-senha" name="confirmarSenha" required>
-                <p class="erro-senha" id="erro-senha">As senhas não coincidem.</p>
+                <input type="password" id="confirmar-senha" name="confirmarSenha" required minlength="8">
+                <p class="erro-senha" id="erro-senha">A senha deve ter pelo menos 8 caracteres e as senhas precisam coincidir.</p>
             </div>
 
             <!-- Foto + Semestre lado a lado -->
@@ -127,7 +138,7 @@
     form.addEventListener('submit', (e) => {
         let ok = true;
 
-        if (senha.value !== confirmar.value) {
+        if (senha.value.length < 8 || senha.value !== confirmar.value) {
             erroSenha.classList.add('visivel');
             ok = false;
         } else {

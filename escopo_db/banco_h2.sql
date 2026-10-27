@@ -1,4 +1,3 @@
---utilizar a rota console dentro do localhost
 -- --- Usuarios e perfis ------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS usuario (

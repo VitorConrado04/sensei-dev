@@ -1,5 +1,6 @@
 package br.com.senseidev.servlet;
 
+import br.com.senseidev.auth.SessaoUtil;
 import br.com.senseidev.dao.MentorDao;
 
 import javax.servlet.ServletException;
@@ -8,39 +9,43 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
-// materiais que o mentor disponibiliza (listar, adicionar e remover)
+/** Lista, adiciona e remove exclusivamente materiais do mentor autenticado. */
 @WebServlet("/mentor-material")
 public class MentorMaterialServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        MentorDao dao = new MentorDao();
-        int mentorId = MentorDao.MENTOR_TESTE;
-
-        req.setAttribute("mentor", dao.buscarMentor(mentorId));
-        req.setAttribute("materiais", dao.listarMateriais(mentorId));
-
-        req.getRequestDispatcher("/MateriaisMentor.jsp").forward(req, resp);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        int mentorId = SessaoUtil.obterMentorId(req);
+        MentorDao dao = new MentorDao(getServletContext());
+        try {
+            req.setAttribute("mentor", dao.buscarMentor(mentorId));
+            req.setAttribute("materiais", dao.listarMateriais(mentorId));
+        } catch (SQLException e) {
+            throw new ServletException("Não foi possível carregar os materiais.", e);
+        }
+        req.getRequestDispatcher("/WEB-INF/views/mentor/MateriaisMentor.jsp").forward(req, resp);
     }
 
-    // o mesmo POST atende dois formulários: o de remover (acao=remover) e o de adicionar
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        // sem isso o Tomcat lê o corpo do POST em ISO-8859-1 e quebra os acentos
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-
-        MentorDao dao = new MentorDao();
-        int mentorId = MentorDao.MENTOR_TESTE;
+        int mentorId = SessaoUtil.obterMentorId(req);
+        MentorDao dao = new MentorDao(getServletContext());
         String destino = req.getContextPath() + "/mentor-material";
 
         if ("remover".equals(req.getParameter("acao"))) {
             try {
-                dao.removerMaterial(mentorId, Integer.parseInt(req.getParameter("id")));
-            } catch (NumberFormatException e) {
-                // id inválido, só recarrega
+                int materialId = Integer.parseInt(req.getParameter("id"));
+                dao.removerMaterial(mentorId, materialId);
+            } catch (NumberFormatException ignored) {
+                // ID inválido: não modifica o banco.
+            } catch (SQLException e) {
+                throw new ServletException("Não foi possível remover o material.", e);
             }
             resp.sendRedirect(destino);
             return;
@@ -48,33 +53,19 @@ public class MentorMaterialServlet extends HttpServlet {
 
         String titulo = req.getParameter("titulo");
         String url = req.getParameter("url");
+        titulo = titulo == null ? "" : titulo.trim();
+        url = url == null ? "" : url.trim();
 
-        if (titulo != null) {
-            titulo = titulo.trim();
-        }
-        if (url != null) {
-            url = url.trim();
-        }
-
-        if (!dadosValidos(titulo, url)) {
-            // a página mostra a mensagem quando recebe ?erro=1
+        if (titulo.isEmpty() || titulo.length() > 150 || url.length() > 500
+                || !(url.startsWith("https://") || url.startsWith("http://"))) {
             resp.sendRedirect(destino + "?erro=1");
             return;
         }
-
-        dao.inserirMaterial(mentorId, titulo, url);
-        resp.sendRedirect(destino);
-    }
-
-    // os limites de tamanho são os mesmos das colunas da tabela material
-    // e só aceita http/https pra ninguém salvar um link "javascript:..."
-    private boolean dadosValidos(String titulo, String url) {
-        if (titulo == null || titulo.isEmpty() || titulo.length() > 150) {
-            return false;
+        try {
+            dao.inserirMaterial(mentorId, titulo, url);
+        } catch (SQLException e) {
+            throw new ServletException("Não foi possível salvar o material.", e);
         }
-        if (url == null || url.length() > 500) {
-            return false;
-        }
-        return url.startsWith("http://") || url.startsWith("https://");
+        resp.sendRedirect(destino + "?salvo=1");
     }
 }
