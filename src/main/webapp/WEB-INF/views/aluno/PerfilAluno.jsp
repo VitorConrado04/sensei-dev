@@ -28,7 +28,8 @@
 <main class="conteudo">
     <div class="perfil-topo"><h1 class="titulo-secao">Meu Perfil</h1><button type="button" id="editar-perfil" class="btn-pilula">Editar Perfil</button></div>
     <c:if test="${param.salvo == '1'}"><p class="aviso sucesso" role="status">Perfil atualizado com sucesso.</p></c:if>
-    <c:if test="${not empty param.erro}"><p class="aviso erro" role="alert"><c:choose><c:when test="${param.erro == 'semestre'}">Escolha um semestre entre 1 e 8.</c:when><c:when test="${param.erro == 'foto'}">Escolha uma foto PNG ou JPG válida, com até 2 MB.</c:when><c:otherwise>Não foi possível salvar o perfil.</c:otherwise></c:choose></p></c:if>
+    <c:if test="${param.interesses == 'salvos'}"><p class="aviso sucesso" role="status">Disciplinas de interesse atualizadas.</p></c:if>
+    <c:if test="${not empty param.erro}"><p class="aviso erro" role="alert"><c:choose><c:when test="${param.erro == 'semestre'}">Escolha um semestre entre 1 e 8.</c:when><c:when test="${param.erro == 'foto'}">Escolha uma foto PNG ou JPG válida, com até 2 MB.</c:when><c:when test="${param.erro == 'disciplinas'}">Não foi possível salvar as disciplinas. Revise a seleção.</c:when><c:otherwise>Não foi possível salvar o perfil.</c:otherwise></c:choose></p></c:if>
     <div class="perfil-aluno-grid">
         <div>
             <section class="cartao resumo-aluno" aria-label="Resumo do mentorando">
@@ -40,7 +41,13 @@
             </section>
             <h2 class="titulo-secao secao-aluno">Descrição</h2><section class="cartao descricao-aluno" aria-label="Descrição"></section>
         </div>
-        <div><h2 class="titulo-secao secao-aluno interesse-titulo">Disciplinas de interesse</h2><section class="cartao interesse-aluno" aria-label="Disciplinas de interesse"><p>As disciplinas escolhidas aparecerão aqui.</p></section></div>
+        <div>
+            <div class="interesse-topo"><h2 class="titulo-secao secao-aluno interesse-titulo">Disciplinas de interesse</h2><button type="button" id="editar-interesses" class="btn-pilula">Editar</button></div>
+            <section class="cartao interesse-aluno" aria-label="Disciplinas de interesse">
+                <ul class="interesse-lista"><c:forEach var="d" items="${disciplinas}"><c:if test="${marcadas[d.id]}"><li><c:out value="${d.nome}"/></li></c:if></c:forEach></ul>
+                <c:if test="${empty marcadas}"><p>Você ainda não escolheu disciplinas de interesse.</p></c:if>
+            </section>
+        </div>
     </div>
     <dialog id="dialog-edicao" aria-labelledby="titulo-edicao">
         <form action="${ctx}/perfil-aluno" method="post" enctype="multipart/form-data">
@@ -52,11 +59,23 @@
             <div class="dialog-acoes"><button type="button" id="cancelar-edicao" class="btn-pilula">Cancelar</button><button type="submit" class="btn-pilula btn-roxo">Salvar perfil</button></div>
         </form>
     </dialog>
+    <dialog id="dialog-interesses" aria-labelledby="titulo-interesses">
+        <form action="${ctx}/interesses-aluno" method="post">
+            <h2 id="titulo-interesses" class="titulo-secao">Disciplinas de interesse</h2>
+            <p class="ajuda">Marque as disciplinas em que você busca orientação.</p>
+            <div class="opcoes-interesse"><c:forEach var="d" items="${disciplinas}"><label class="opcao-interesse"><input type="checkbox" name="disciplina" value="${d.id}" ${marcadas[d.id] ? 'checked' : ''}><span><c:out value="${d.nome}"/><small>${d.semestre}º semestre</small></span></label></c:forEach></div>
+            <div class="dialog-acoes"><button type="button" id="cancelar-interesses" class="btn-pilula">Cancelar</button><button type="submit" class="btn-pilula btn-roxo">Salvar interesses</button></div>
+        </form>
+    </dialog>
 </main>
 <script>
 const dialogo = document.getElementById('dialog-edicao');
 document.getElementById('editar-perfil').addEventListener('click', () => dialogo.showModal());
 document.getElementById('cancelar-edicao').addEventListener('click', () => dialogo.close());
+const dialogoInteresses = document.getElementById('dialog-interesses');
+document.getElementById('editar-interesses').addEventListener('click', () => dialogoInteresses.showModal());
+document.getElementById('cancelar-interesses').addEventListener('click', () => dialogoInteresses.close());
+dialogoInteresses.addEventListener('close', () => dialogoInteresses.querySelector('form').reset());
 dialogo.querySelector('form').addEventListener('submit', event => {
     const foto = document.getElementById('foto').files[0];
     const erro = document.getElementById('erro-foto-local');

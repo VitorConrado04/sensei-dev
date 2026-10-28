@@ -10,9 +10,21 @@
 .resumo-curso { color: var(--suave); font-size: .9rem; margin-bottom: .35rem; }
 .secao-aluno { margin: 1.5rem 0 .7rem; }.interesse-titulo { margin-top: 0; }
 .descricao-aluno { min-height: 310px; }.interesse-aluno { min-height: 260px; color: var(--suave); }
+.interesse-topo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .7rem; }
+.interesse-topo .secao-aluno { margin: 0; }
+.interesse-topo .btn-pilula { padding: .65rem 1.15rem; }
+.interesse-lista { display: grid; gap: .7rem; color: var(--texto); font-family: var(--fonte-titulo); }
 .aviso { padding: .75rem 1rem; margin-top: 1rem; border-radius: 10px; }.sucesso { background: #244a38; }.erro { background: #662d38; }
 #dialog-edicao { width: min(92vw, 480px); margin: auto; padding: 2rem; border: 0; border-radius: 24px; color: var(--texto); background: var(--card); }
 #dialog-edicao::backdrop { background: rgba(0,0,0,.7); }
+#dialog-interesses { width: min(92vw, 540px); max-height: 85vh; margin: auto; padding: 2rem; border: 0; border-radius: 24px; color: var(--texto); background: var(--card); }
+#dialog-interesses::backdrop { background: rgba(0,0,0,.7); }
+#dialog-interesses form { display: grid; gap: .9rem; }
+.opcoes-interesse { display: grid; gap: .45rem; max-height: 45vh; overflow-y: auto; }
+.opcao-interesse { display: flex; align-items: center; gap: .8rem; padding: .7rem; border-radius: 10px; background: var(--card-alto); cursor: pointer; }
+.opcao-interesse input { accent-color: var(--roxo-claro); width: 1.2rem; height: 1.2rem; flex: none; }
+.opcao-interesse small { display: block; color: var(--suave); margin-top: .2rem; }
+#dialog-interesses .dialog-acoes { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: flex-end; }
 #dialog-edicao form { display: grid; gap: .9rem; }#dialog-edicao h2 { margin-bottom: .7rem; }#dialog-edicao label { font-family: var(--fonte-titulo); }
 #dialog-edicao select, #dialog-edicao input[type=file] { width: 100%; padding: .7rem; border: 1px solid var(--suave); border-radius: 8px; background: var(--bg-escuro); color: var(--texto); font: inherit; }
 #dialog-edicao .ajuda { color: var(--suave); font-size: .9rem; }

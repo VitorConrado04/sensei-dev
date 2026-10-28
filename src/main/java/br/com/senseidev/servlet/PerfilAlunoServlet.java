@@ -1,6 +1,8 @@
 package br.com.senseidev.servlet;
 
 import br.com.senseidev.dao.UsuarioDao;
+import br.com.senseidev.dao.DisciplinaDao;
+import br.com.senseidev.dao.InteresseDao;
 import br.com.senseidev.model.UsuarioResumo;
 
 import javax.servlet.ServletException;
@@ -18,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 /** Perfil do mentorando: visualiza e altera o semestre e a foto da própria conta. */
 @WebServlet("/perfil-aluno")
@@ -34,6 +38,12 @@ public class PerfilAlunoServlet extends HttpServlet {
                 return;
             }
             req.setAttribute("usuario", usuario);
+            req.setAttribute("disciplinas", new DisciplinaDao(getServletContext()).listarDisciplinas());
+            Map<Integer, Boolean> marcadas = new HashMap<>();
+            for (Integer disciplinaId : new InteresseDao(getServletContext()).listarIds(usuario.getId())) {
+                marcadas.put(disciplinaId, true);
+            }
+            req.setAttribute("marcadas", marcadas);
             req.getRequestDispatcher("/WEB-INF/views/aluno/PerfilAluno.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException("Não foi possível carregar o perfil.", e);
