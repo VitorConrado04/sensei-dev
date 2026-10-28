@@ -2,6 +2,8 @@
 .voltar-busca { color: var(--roxo-claro); text-decoration: none; font-family: var(--fonte-titulo); }
 .voltar-busca:hover { text-decoration: underline; }
 .titulo-perfil-publico { margin: 1.2rem 0 1.5rem; }
+.perfil-favorito { margin: -1rem 0 1.5rem; }
+.perfil-favorito .btn-pilula { padding: .65rem 1.2rem; font-size: .85rem; }
 .perfil-publico { grid-template-columns: minmax(0, 38rem) minmax(0, 1fr); }
 .perfil-publico > div, .perfil-publico > section { min-width: 0; }
 .perfil-publico .titulo-secao { margin: 2rem 0 1rem; }

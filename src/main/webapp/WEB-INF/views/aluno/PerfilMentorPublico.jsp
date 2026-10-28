@@ -30,6 +30,13 @@
 <main class="conteudo">
     <a class="voltar-busca" href="${ctx}/inicio-aluno">← Voltar à busca</a>
     <h1 class="titulo-secao titulo-perfil-publico">Perfil do mentor</h1>
+    <form class="perfil-favorito" action="${ctx}/favoritos-aluno" method="post">
+        <input type="hidden" name="token" value="${tokenFavorito}">
+        <input type="hidden" name="mentor" value="${mentor.id}">
+        <input type="hidden" name="retorno" value="perfil">
+        <input type="hidden" name="acao" value="${favorito ? 'desfavoritar' : 'favoritar'}">
+        <button type="submit" class="btn-pilula">${favorito ? '★ Remover dos favoritos' : '☆ Salvar nos favoritos'}</button>
+    </form>
     <div class="perfil perfil-publico">
         <div>
             <section class="cartao cartao-perfil" aria-label="Resumo do mentor">

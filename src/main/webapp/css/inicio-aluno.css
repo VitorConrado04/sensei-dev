@@ -6,6 +6,7 @@
 .campo-semestre, .campo-nota { display: flex; align-items: center; gap: .75rem; font-family: var(--fonte-titulo); }
 .campo-semestre select, .campo-nota select { min-width: 0; flex: 1; padding: .7rem .8rem; border: 0; border-radius: 10px; background: #686176; color: #fff; font: inherit; }
 .campo-nota { flex-wrap: wrap; }
+.campo-nota select { flex: 0 0 100%; width: 100%; }
 .materias { border: 0; display: grid; gap: .9rem; max-height: 26rem; overflow-y: auto; padding: .1rem .35rem .1rem .1rem; }
 .materia { display: flex; align-items: center; gap: .8rem; min-width: 0; font-family: var(--fonte-titulo); font-size: .9rem; cursor: pointer; }
 .materia input { width: 1.25rem; height: 1.25rem; flex: none; accent-color: #6a4fa5; }
@@ -16,6 +17,7 @@
 .resultados { min-width: 0; }
 .resultados h2 { text-align: center; }
 .resultado-contagem { text-align: center; color: var(--suave); margin: .55rem 0 1.5rem; }
+.atalho-favoritos { display: block; text-align: center; color: var(--roxo-claro); margin-top: .4rem; text-underline-offset: .2rem; }
 .lista-mentores { display: grid; gap: 1.4rem; }
 .mentor-card { min-width: 0; background: #393438; border-radius: 30px; padding: 1.2rem clamp(1.2rem, 2vw, 2rem); }
 .mentor-card-selecionado { outline: 2px solid var(--roxo-claro); }
@@ -29,8 +31,19 @@
 .mentor-acao:hover { background: var(--roxo); }
 .mentor-acao-atual { background: #514967; }
 .mentor-acao-perfil { margin-left: .6rem; background: #514967; }
+.form-favorito { display: inline; }
+.form-favorito button { border: 0; cursor: pointer; }
 .mentor-selecionado { background: #4b4558; border: 2px solid var(--roxo-claro); border-radius: 28px; padding: 1.5rem; margin-bottom: 1.5rem; scroll-margin-top: 1rem; }
 .etiqueta-selecionado { display: inline-block; margin-bottom: .65rem; color: #dbceff; font-family: var(--fonte-titulo); font-size: .75rem; }
 .mentor-selecionado h3 { font-family: var(--fonte-titulo); font-size: 1.25rem; font-weight: 400; }
+.favoritos-painel { grid-column: 1 / -1; margin-top: .8rem; }
+.favoritos-painel h2 { margin-bottom: 1rem; }
+.favoritos-lista { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: .8rem; }
+.favorito-item { background: var(--card); border-radius: 20px; padding: 1rem 1.3rem; display: flex; align-items: center; justify-content: space-between; gap: .8rem; }
+.favorito-item a { color: var(--texto); font-family: var(--fonte-titulo); text-decoration: none; overflow-wrap: anywhere; }
+.favorito-item a:hover { color: var(--roxo-claro); }
+.favorito-item span { font-family: var(--fonte-titulo); overflow-wrap: anywhere; }
+.favorito-item small { color: var(--suave); font-family: var(--fonte-corpo); }
+.favorito-item button { background: transparent; border: 0; color: var(--roxo-claro); font-size: .85rem; }
 @media (max-width: 900px) { .busca-layout { grid-template-columns: 1fr; }.materias { max-height: 13rem; } }
 @media (max-width: 560px) { .mentor-card-topo { flex-wrap: wrap; }.mentor-nota { width: 100%; margin: 0 0 0 4.3rem; }.mentor-card p, .mentor-acao { margin-left: 0; margin-right: .5rem; } }

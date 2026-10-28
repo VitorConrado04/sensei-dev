@@ -286,3 +286,5 @@ O usuário editado é sempre o da sessão.
   leitura e exige sessão de mentorando.
 - A escolha de uma data e o envio de uma solicitação de mentoria pertencem à
   etapa P2-06; a grade semanal ainda não confirma uma vaga em uma data específica.
+- Na P2-05, o mentorando pode salvar e remover mentores favoritos na busca ou
+  no perfil público. A lista "Meus favoritos" fica na própria página inicial.

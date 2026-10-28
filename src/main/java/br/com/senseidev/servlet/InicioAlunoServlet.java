@@ -1,10 +1,13 @@
 package br.com.senseidev.servlet;
 
+import br.com.senseidev.auth.TokenFavorito;
 import br.com.senseidev.dao.DisciplinaDao;
+import br.com.senseidev.dao.FavoritoDao;
 import br.com.senseidev.dao.MentorBuscaDao;
 import br.com.senseidev.dao.UsuarioDao;
 import br.com.senseidev.model.Disciplina;
 import br.com.senseidev.model.MentorBusca;
+import br.com.senseidev.model.MentorFavorito;
 import br.com.senseidev.model.UsuarioResumo;
 
 import javax.servlet.ServletException;
@@ -67,6 +70,13 @@ public class InicioAlunoServlet extends HttpServlet {
             MentorBuscaDao buscaDao = new MentorBuscaDao(getServletContext());
             List<MentorBusca> mentores = buscaDao.buscar(semestre, selecionadas, notaMinima);
             req.setAttribute("mentores", mentores);
+            List<MentorFavorito> favoritos = new FavoritoDao(getServletContext())
+                    .listar(usuario.getId());
+            Map<Integer, Boolean> favoritosMarcados = new HashMap<>();
+            for (MentorFavorito favorito : favoritos) favoritosMarcados.put(favorito.getId(), true);
+            req.setAttribute("favoritos", favoritos);
+            req.setAttribute("favoritosMarcados", favoritosMarcados);
+            req.setAttribute("tokenFavorito", TokenFavorito.obter(sessao));
             Integer mentorId = inteiroOpcional(req.getParameter("mentor"), 1, Integer.MAX_VALUE);
             if (mentorId != null) {
                 for (MentorBusca mentor : mentores) {

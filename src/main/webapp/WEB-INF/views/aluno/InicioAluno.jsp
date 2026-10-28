@@ -52,6 +52,7 @@
     </form>
     <section class="resultados" aria-labelledby="titulo-resultados">
         <h2 id="titulo-resultados" class="titulo-secao">Mentores disponíveis</h2>
+        <a class="atalho-favoritos" href="#favoritos">Meus favoritos (<c:out value="${favoritos.size()}"/>)</a>
         <p class="resultado-contagem"><c:out value="${mentores.size()}"/> ${mentores.size() == 1 ? 'mentor exibido' : 'mentores exibidos'}</p>
         <c:if test="${not empty mentorSelecionado}">
             <section id="mentor-selecionado" class="mentor-selecionado" aria-labelledby="titulo-selecionado">
@@ -64,7 +65,7 @@
         <c:choose>
             <c:when test="${empty mentores}"><p class="vazio">Nenhum mentor encontrado com esses filtros. Tente outra disciplina, semestre ou nota.</p></c:when>
             <c:otherwise><div class="lista-mentores"><c:forEach var="mentor" items="${mentores}">
-                <article class="mentor-card ${mentorSelecionado.id == mentor.id ? 'mentor-card-selecionado' : ''}">
+                <article id="mentor-${mentor.id}" class="mentor-card ${mentorSelecionado.id == mentor.id ? 'mentor-card-selecionado' : ''}">
                     <div class="mentor-card-topo"><span class="mentor-avatar" aria-hidden="true"><c:out value="${mentor.nome.substring(0,1)}"/></span><h3><c:out value="${mentor.nome}"/></h3>
                         <span class="mentor-nota"><c:choose><c:when test="${mentor.totalAvaliacoes > 0}">★ <fmt:formatNumber value="${mentor.notaMedia}" minFractionDigits="1" maxFractionDigits="1"/> <small>(<c:out value="${mentor.totalAvaliacoes}"/> ${mentor.totalAvaliacoes == 1 ? 'avaliação' : 'avaliações'})</small></c:when><c:otherwise>Sem avaliações</c:otherwise></c:choose></span>
                     </div>
@@ -83,8 +84,29 @@
                     </c:choose>
                     <c:url var="urlPerfil" value="/mentor-publico"><c:param name="id" value="${mentor.id}"/></c:url>
                     <a class="mentor-acao mentor-acao-perfil" href="${urlPerfil}">Ver perfil</a>
+                    <form class="form-favorito" action="${ctx}/favoritos-aluno" method="post">
+                        <input type="hidden" name="token" value="${tokenFavorito}">
+                        <input type="hidden" name="mentor" value="${mentor.id}">
+                        <input type="hidden" name="acao" value="${favoritosMarcados[mentor.id] ? 'desfavoritar' : 'favoritar'}">
+                        <input type="hidden" name="retorno" value="busca">
+                        <input type="hidden" name="filtroSemestre" value="${semestre}">
+                        <input type="hidden" name="filtroNota" value="${notaMinima}">
+                        <input type="hidden" name="selecionado" value="${mentorSelecionado.id}">
+                        <c:forEach var="disciplinaId" items="${selecionadas}"><input type="hidden" name="filtroDisciplina" value="${disciplinaId}"></c:forEach>
+                        <button class="mentor-acao mentor-acao-perfil" type="submit">${favoritosMarcados[mentor.id] ? 'Remover favorito' : 'Favoritar'}</button>
+                    </form>
                 </article>
             </c:forEach></div></c:otherwise>
+        </c:choose>
+    </section>
+    <section id="favoritos" class="favoritos-painel" aria-labelledby="titulo-favoritos">
+        <h2 id="titulo-favoritos" class="titulo-secao">Meus favoritos</h2>
+        <c:choose><c:when test="${empty favoritos}"><p class="vazio">Você ainda não salvou nenhum mentor.</p></c:when>
+            <c:otherwise><ul class="favoritos-lista"><c:forEach var="favorito" items="${favoritos}"><li class="favorito-item">
+                <c:url var="urlFavorito" value="/mentor-publico"><c:param name="id" value="${favorito.id}"/></c:url>
+                <c:choose><c:when test="${favorito.ativo}"><a href="${urlFavorito}"><c:out value="${favorito.nome}"/></a></c:when><c:otherwise><span><c:out value="${favorito.nome}"/> <small>(indisponível)</small></span></c:otherwise></c:choose>
+                <form action="${ctx}/favoritos-aluno" method="post"><input type="hidden" name="token" value="${tokenFavorito}"><input type="hidden" name="mentor" value="${favorito.id}"><input type="hidden" name="acao" value="desfavoritar"><button type="submit">Remover</button></form>
+            </li></c:forEach></ul></c:otherwise>
         </c:choose>
     </section>
 </main>

@@ -1,6 +1,8 @@
 package br.com.senseidev.servlet;
 
+import br.com.senseidev.auth.TokenFavorito;
 import br.com.senseidev.dao.PerfilMentorPublicoDao;
+import br.com.senseidev.dao.FavoritoDao;
 import br.com.senseidev.dao.UsuarioDao;
 import br.com.senseidev.model.HorarioGrade;
 import br.com.senseidev.model.PerfilMentorPublico;
@@ -68,6 +70,9 @@ public class PerfilMentorPublicoServlet extends HttpServlet {
             req.setAttribute("avaliacoes", dao.avaliacoes(mentorId));
             req.setAttribute("grade", grade);
             req.setAttribute("temDisponibilidade", temDisponibilidade);
+            req.setAttribute("favorito", new FavoritoDao(getServletContext())
+                    .eFavorito(aluno.getId(), mentorId));
+            req.setAttribute("tokenFavorito", TokenFavorito.obter(sessao));
             req.getRequestDispatcher("/WEB-INF/views/aluno/PerfilMentorPublico.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException("Não foi possível carregar o perfil do mentor.", e);
