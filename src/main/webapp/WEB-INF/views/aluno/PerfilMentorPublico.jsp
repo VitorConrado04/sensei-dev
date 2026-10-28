@@ -67,10 +67,54 @@
         <section class="disponibilidade-publica" aria-labelledby="titulo-disponibilidade">
             <h2 id="titulo-disponibilidade" class="grade-titulo">DISPONIBILIDADE SEMANAL</h2>
             <c:choose><c:when test="${not temDisponibilidade}"><p class="vazio">O mentor ainda não cadastrou horários disponíveis.</p></c:when>
-                <c:otherwise><div class="rolagem"><table class="grade"><thead><tr><th scope="col">Horários</th><th scope="col">Segunda</th><th scope="col">Terça</th><th scope="col">Quarta</th><th scope="col">Quinta</th><th scope="col">Sexta</th><th scope="col">Sábado</th></tr></thead><tbody><c:forEach var="linha" items="${grade}"><tr><th scope="row">${linha.hora}:00</th><c:forEach var="estado" items="${linha.dias}"><td class="cel"><span class="${estado == 'D' ? 'cel-d' : 'cel-x'}">${estado == 'D' ? 'Disponível' : '—'}</span></td></c:forEach></tr></c:forEach></tbody></table></div><p class="nota-disponibilidade">Horários semanais cadastrados pelo mentor. A disponibilidade para uma data específica é confirmada ao solicitar a mentoria.</p></c:otherwise>
+                <c:otherwise><div class="rolagem"><table class="grade"><thead><tr><th scope="col">Horários</th><th scope="col">Segunda</th><th scope="col">Terça</th><th scope="col">Quarta</th><th scope="col">Quinta</th><th scope="col">Sexta</th><th scope="col">Sábado</th></tr></thead><tbody><c:forEach var="linha" items="${grade}"><tr><th scope="row">${linha.hora}:00</th><c:forEach var="estado" items="${linha.dias}"><td class="cel"><span class="${estado == 'D' ? 'cel-d' : 'cel-x'}">${estado == 'D' ? 'Disponível' : '—'}</span></td></c:forEach></tr></c:forEach></tbody></table></div><p class="nota-disponibilidade">Horários semanais cadastrados pelo mentor. A solicitação ficará pendente até a confirmação dele.</p></c:otherwise>
             </c:choose>
         </section>
     </div>
+    <section id="solicitar-mentoria" class="solicitar-mentoria cartao" aria-labelledby="titulo-solicitar">
+        <h2 id="titulo-solicitar" class="titulo-secao">Solicitar mentoria</h2>
+        <p>Escolha uma data e um horário cadastrado pelo mentor. Seu pedido ficará pendente até a confirmação dele.</p>
+        <c:if test="${param.solicitacao == 'enviada'}"><p class="solicitacao-sucesso" role="status">Solicitação enviada! Aguarde a confirmação do mentor.</p></c:if>
+        <c:if test="${param.erro == 'objetivo'}"><p class="solicitacao-erro" role="alert">Informe o objetivo da mentoria em até 500 caracteres.</p></c:if>
+        <c:if test="${param.erro == 'horario'}"><p class="solicitacao-erro" role="alert">Não foi possível solicitar nesse horário. Confira os dados e escolha novamente.</p></c:if>
+        <c:if test="${dataInvalida}"><p class="solicitacao-erro" role="alert">Escolha uma data válida.</p></c:if>
+        <form class="selecionar-data" action="${ctx}/mentor-publico#solicitar-mentoria" method="get">
+            <input type="hidden" name="id" value="${mentor.id}">
+            <label for="data-mentoria">Data</label>
+            <input id="data-mentoria" name="data" type="date" min="${dataMinima}" value="${dataSelecionada}" required>
+            <label for="duracao-mentoria">Duração</label>
+            <select id="duracao-mentoria" name="duracao">
+                <option value="60" ${duracaoSelecionada == 60 ? 'selected' : ''}>1 hora</option>
+                <option value="120" ${duracaoSelecionada == 120 ? 'selected' : ''}>2 horas</option>
+            </select>
+            <button class="btn-pilula" type="submit">Ver horários</button>
+        </form>
+        <c:if test="${not empty dataSelecionada}">
+            <c:choose>
+                <c:when test="${empty horariosMentoria}"><p class="vazio">Não há horários cadastrados para essa data e duração.</p></c:when>
+                <c:otherwise>
+                    <form class="enviar-solicitacao" action="${ctx}/solicitar-mentoria" method="post">
+                        <input type="hidden" name="token" value="${tokenMentoria}">
+                        <input type="hidden" name="mentor" value="${mentor.id}">
+                        <input type="hidden" name="data" value="${dataSelecionada}">
+                        <input type="hidden" name="duracao" value="${duracaoSelecionada}">
+                        <label for="disciplina-mentoria">Disciplina</label>
+                        <select id="disciplina-mentoria" name="disciplina" required>
+                            <option value="">Selecione a disciplina</option>
+                            <c:forEach var="d" items="${disciplinas}"><option value="${d.id}"><c:out value="${d.nome}"/></option></c:forEach>
+                        </select>
+                        <label for="hora-mentoria">Horário de início</label>
+                        <select id="hora-mentoria" name="hora" required>
+                            <c:forEach var="hora" items="${horariosMentoria}"><option value="${hora}">${hora}</option></c:forEach>
+                        </select>
+                        <label for="objetivo-mentoria">O que você deseja aprender nesta sessão?</label>
+                        <textarea id="objetivo-mentoria" name="objetivo" maxlength="500" rows="4" required placeholder="Ex.: Tirar dúvidas sobre banco de dados"></textarea>
+                        <button class="btn-pilula" type="submit">Enviar solicitação</button>
+                    </form>
+                </c:otherwise>
+            </c:choose>
+        </c:if>
+    </section>
 </main>
 </body>
 </html>

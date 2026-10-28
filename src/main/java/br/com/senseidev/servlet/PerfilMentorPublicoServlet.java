@@ -1,8 +1,10 @@
 package br.com.senseidev.servlet;
 
 import br.com.senseidev.auth.TokenFavorito;
+import br.com.senseidev.auth.TokenMentoria;
 import br.com.senseidev.dao.PerfilMentorPublicoDao;
 import br.com.senseidev.dao.FavoritoDao;
+import br.com.senseidev.dao.SolicitacaoMentoriaDao;
 import br.com.senseidev.dao.UsuarioDao;
 import br.com.senseidev.model.HorarioGrade;
 import br.com.senseidev.model.PerfilMentorPublico;
@@ -16,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 /** Perfil público e somente de leitura de um mentor para um mentorando autenticado. */
@@ -73,6 +77,23 @@ public class PerfilMentorPublicoServlet extends HttpServlet {
             req.setAttribute("favorito", new FavoritoDao(getServletContext())
                     .eFavorito(aluno.getId(), mentorId));
             req.setAttribute("tokenFavorito", TokenFavorito.obter(sessao));
+            req.setAttribute("tokenMentoria", TokenMentoria.obter(sessao));
+            req.setAttribute("dataMinima", LocalDate.now().toString());
+            int duracao = "120".equals(req.getParameter("duracao")) ? 120 : 60;
+            req.setAttribute("duracaoSelecionada", duracao);
+            String dataTexto = req.getParameter("data");
+            if (dataTexto != null && !dataTexto.isEmpty()) {
+                try {
+                    LocalDate data = LocalDate.parse(dataTexto);
+                    if (!data.isBefore(LocalDate.now())) {
+                        req.setAttribute("dataSelecionada", data.toString());
+                        req.setAttribute("horariosMentoria", new SolicitacaoMentoriaDao(getServletContext())
+                                .horariosCadastrados(mentorId, data, duracao));
+                    }
+                } catch (DateTimeParseException e) {
+                    req.setAttribute("dataInvalida", true);
+                }
+            }
             req.getRequestDispatcher("/WEB-INF/views/aluno/PerfilMentorPublico.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException("Não foi possível carregar o perfil do mentor.", e);
