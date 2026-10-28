@@ -20,3 +20,12 @@ out/
 
 # Arquivo temporário de trava do H2.
 *.lock.db
+
+# ===== Banco H2 =====
+# Cada pessoa gera o seu banco ao subir o Tomcat: o InicializadorBanco cria as
+# tabelas, as disciplinas e o admin sozinho. Por isso o arquivo não vai pro Git.
+*.mv.db
+
+# ===== Uploads =====
+# Fotos enviadas durante os testes (cada máquina tem as suas).
+src/main/webapp/uploads/
