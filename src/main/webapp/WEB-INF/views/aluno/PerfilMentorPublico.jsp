@@ -10,10 +10,10 @@
     <title>Perfil de <c:out value="${mentor.nome}"/> | SENSEI.DEV</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600&family=Bruno+Ace&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${ctx}/css/mentor.css"><link rel="stylesheet" href="${ctx}/css/perfil-mentor-publico.css">
+    <link rel="stylesheet" href="${ctx}/css/mentor.css?v=p2-08"><link rel="stylesheet" href="${ctx}/css/perfil-mentor-publico.css">
 </head>
 <body>
-<header class="topo">
+<header class="topo topo-mentorando">
     <div class="topo-perfil">
         <c:choose>
             <c:when test="${not empty aluno.fotoUrl}"><img class="avatar" style="--tam:64px" src="${ctx}<c:out value='${aluno.fotoUrl}'/>" alt="Sua foto de perfil"></c:when>
@@ -22,7 +22,7 @@
         <div class="topo-info"><span class="topo-curso"><c:out value="${aluno.semestreAtual}"/>º semestre ADS</span><strong class="topo-nome"><c:out value="${aluno.nome}"/></strong></div>
     </div>
     <nav class="abas" aria-label="Navegação do mentorando">
-        <a class="aba" href="${ctx}/inicio-aluno">Início</a><a class="aba" href="${ctx}/perfil-aluno">Perfil</a>
+        <a class="aba" href="${ctx}/inicio-aluno">Início</a><a class="aba" href="${ctx}/mentorias-aluno">Mentorias</a><a class="aba" href="${ctx}/perfil-aluno">Perfil</a>
         <a class="aba" href="${ctx}/conta">Minha conta</a><a class="aba" href="${ctx}/logout">Sair</a>
     </nav>
     <a class="logo" href="${ctx}/inicio-aluno">SENSEI.DEV</a>

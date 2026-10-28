@@ -14,7 +14,7 @@ import java.io.IOException;
 @WebFilter(urlPatterns = {
         "/mentor-inicio", "/mentor-perfil", "/mentor-material", "/mentor-avaliacao", "/inicio-aluno",
         "/admin/*", "/conta", "/perfil-aluno", "/interesses-aluno", "/mentor-publico", "/favoritos-aluno",
-        "/solicitar-mentoria"
+        "/solicitar-mentoria", "/mentorias-aluno"
 })
 public class AutenticacaoFiltro implements Filter {
     @Override public void init(FilterConfig filterConfig) { }
@@ -54,7 +54,8 @@ public class AutenticacaoFiltro implements Filter {
         if (rota.startsWith("/admin")) tipoEsperado = "ADMIN";
         else if (rota.equals("/inicio-aluno") || rota.equals("/perfil-aluno")
                 || rota.equals("/interesses-aluno") || rota.equals("/mentor-publico")
-                || rota.equals("/favoritos-aluno") || rota.equals("/solicitar-mentoria")) tipoEsperado = "MENTORANDO";
+                || rota.equals("/favoritos-aluno") || rota.equals("/solicitar-mentoria")
+                || rota.equals("/mentorias-aluno")) tipoEsperado = "MENTORANDO";
         else tipoEsperado = "MENTOR";
 
         // Conta do tipo errado e mandada para a propria area

@@ -1,0 +1,24 @@
+/* Minhas mentorias: cartões na paleta do protótipo do mentorando. */
+.minhas-mentorias { max-width: 1260px; margin: 0 auto; }
+.mentorias-titulo { width: fit-content; margin: .5rem auto 1.5rem; padding: .8rem 1.8rem; border-radius: 26px; background: var(--card); font: 400 clamp(1.3rem, 2.6vw, 2rem) var(--fonte-titulo); text-align: center; }
+.atalhos-mentorias { display: flex; justify-content: center; flex-wrap: wrap; gap: .75rem 1.5rem; margin-bottom: 2rem; }
+.atalhos-mentorias a { color: var(--roxo-claro); text-decoration: none; }
+.atalhos-mentorias a:hover { text-decoration: underline; }
+.grupo-mentorias { margin: 2rem 0 2.5rem; }
+.grupo-mentorias h2 { margin-bottom: 1rem; }
+.grupo-mentorias h2 small { font: 400 .65em var(--fonte-corpo); color: var(--suave); }
+.mentorias-lista { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }
+.mentoria-card { min-width: 0; display: flex; flex-direction: column; gap: .65rem; padding: 1.5rem 1.7rem; border-radius: 32px; background: #4b4558; overflow-wrap: anywhere; }
+.mentoria-card h3 { font: 400 clamp(1rem, 1.7vw, 1.3rem) var(--fonte-titulo); text-align: center; }
+.mentoria-objetivo { text-align: center; line-height: 1.5; white-space: pre-wrap; }
+.mentoria-mentor { margin: .35rem 0 .8rem; text-align: center; }
+.mentoria-mentor a { color: inherit; text-underline-offset: .2em; }
+.mentoria-detalhes { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; padding-top: .35rem; font-family: var(--fonte-titulo); font-size: .85rem; }
+.mentoria-estado { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: .25rem; font-family: var(--fonte-titulo); }
+.estado { min-width: 8rem; padding: .28rem .7rem; border-radius: 8px; background: #e5e0eb; color: #302b3b; font-size: .76rem; text-align: center; }
+.estado-PENDENTE { background: #f4e3b3; color: #493b19; }
+.estado-CONFIRMADA { background: #c3efd0; color: #19452b; }
+.estado-REALIZADA { background: #d6c9f5; color: #32245a; }
+.estado-CANCELADA { background: #f0ccd0; color: #612c35; }
+@media (max-width: 850px) { .mentorias-lista { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 600px) { .mentoria-card { padding: 1.3rem; border-radius: 26px; } .mentoria-detalhes { font-family: var(--fonte-corpo); } .mentoria-estado { flex-wrap: wrap; } }
