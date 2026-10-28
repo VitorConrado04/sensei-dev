@@ -234,7 +234,7 @@ Tela de perfil do mentorando, com disciplinas de interesse.
     - `servlet`: controladores
     - `filter`: `AutenticacaoFiltro` (protege as rotas por login e por tipo de usuário)
     - `listener`: `InicializadorBanco` (cria tabelas, disciplinas e o admin ao subir)
-    - `util`: `SenhaUtil` (hash PBKDF2 das senhas)
+    - `auth`: `SenhaUtil` (hash PBKDF2 das senhas)
 - `src/main/webapp/WEB-INF/views/`: páginas JSP (`admin`, `aluno`, `conta`, ...)
 - `src/main/webapp/WEB-INF/fragmentos/`: cabeçalhos reutilizáveis
 - `escopo_db/`: DBML, SQL do PostgreSQL, SQL do H2 e MER
