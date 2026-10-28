@@ -55,7 +55,10 @@ public class LoginServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/mentor-inicio");
             } else if ("MENTORANDO".equals(usuario.getTipo())) {
                 resp.sendRedirect(req.getContextPath() + "/inicio-aluno");
-            } else {
+            } else if("ADMIN".equals(usuario.getTipo())) {
+                resp.sendRedirect(req.getContextPath() + "/admin/inicio");
+            }
+            else {
                 sessao.invalidate();
                 resp.sendRedirect(req.getContextPath() + "/LoginArea.jsp?erro=credenciais");
             }

@@ -12,7 +12,8 @@ import java.io.IOException;
 
 /** Protege rotas privadas e impede que um mentorando navegue na área do mentor. */
 @WebFilter(urlPatterns = {
-        "/mentor-inicio", "/mentor-perfil", "/mentor-material", "/mentor-avaliacao", "/inicio-aluno"
+        "/mentor-inicio", "/mentor-perfil", "/mentor-material", "/mentor-avaliacao", "/inicio-aluno",
+        "/admin/*"
 })
 public class AutenticacaoFiltro implements Filter {
     @Override public void init(FilterConfig filterConfig) { }
@@ -37,16 +38,23 @@ public class AutenticacaoFiltro implements Filter {
             return;
         }
 
-        boolean rotaAluno = req.getServletPath().equals("/inicio-aluno");
-        String tipoEsperado = rotaAluno ? "MENTORANDO" : "MENTOR";
+        String rota = req.getServletPath();
+        String tipoEsperado;
+        if (rota.startsWith("/admin")) tipoEsperado = "ADMIN";
+        else if (rota.equals("/inicio-aluno")) tipoEsperado = "MENTORANDO";
+        else tipoEsperado = "MENTOR";
+
+        // Conta do tipo errado e mandada para a propria area
         if (!tipoEsperado.equals(tipo)) {
             if ("MENTOR".equals(tipo)) resp.sendRedirect(req.getContextPath() + "/mentor-inicio");
             else if ("MENTORANDO".equals(tipo)) resp.sendRedirect(req.getContextPath() + "/inicio-aluno");
+            else if ("ADMIN".equals(tipo)) resp.sendRedirect(req.getContextPath() + "/admin/inicio");
             else resp.sendRedirect(req.getContextPath() + "/LoginArea.jsp?erro=sessao");
             return;
         }
 
-        if (!rotaAluno) {
+        // Rotas de mentor exigem tambem o mentorId na sessao
+        if ("MENTOR".equals(tipoEsperado)) {
             Object mentorId = sessao.getAttribute("mentorId");
             if (!(mentorId instanceof Number) || ((Number) mentorId).intValue() <= 0) {
                 resp.sendRedirect(req.getContextPath() + "/LoginArea.jsp?erro=sessao");

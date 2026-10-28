@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import br.com.senseidev.auth.SenhaUtil;
+import java.sql.ResultSet;
 
 /** Garante a existência das tabelas principais sem apagar ou recriar dados existentes. */
 public class InicializadorBanco implements ServletContextListener {
@@ -74,7 +76,15 @@ public class InicializadorBanco implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         try (Connection c = Conexao.abrir(event.getServletContext()); Statement st = c.createStatement()) {
+            // Coluna TIPO da tabela USUARIO (ADMIN, MENTOR ou MENTORANDO).
+            st.execute("ALTER TABLE usuario ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL DEFAULT 'MENTORANDO'");
+            st.execute("ALTER TABLE usuario ADD CONSTRAINT IF NOT EXISTS ck_usuario_tipo CHECK (tipo IN ('ADMIN', 'MENTOR', 'MENTORANDO'))");
+            // Preenche o tipo de quem ja estava cadastrado, olhando em qual tabela de perfil a pessoa esta
+            st.execute("UPDATE usuario SET tipo = 'MENTOR' WHERE id IN (SELECT id FROM mentor_perfil)");
+            st.execute("UPDATE usuario SET tipo = 'MENTORANDO' WHERE id IN (SELECT id FROM mentorando_perfil)");
+
             for (String sql : ESTRUTURA) st.execute(sql);
+            criarAdminInicial(c);
             criarDisciplinasBase(c);
             event.getServletContext().log("Banco Sensei.dev verificado; tabelas existentes foram preservadas.");
         } catch (SQLException e) {
@@ -87,6 +97,31 @@ public class InicializadorBanco implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
 
     }
+
+    // Admin nao tem tela de cadastro: ele e criado aqui, uma unica vez, quando o Tomcat sobe.
+    // Se o e-mail ja existir, nao faz nada (por isso pode rodar a cada inicializacao)
+    private void criarAdminInicial(Connection c) throws SQLException {
+        String adminEmail = "admin@sensei.dev";
+        String adminSenha = "admin12345";
+
+        // 1) ve se o admin ja existe
+        try (PreparedStatement ps = c.prepareStatement("SELECT 1 FROM usuario WHERE email = ?")) {
+            ps.setString(1, adminEmail);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return;
+            }
+
+        }
+        // 2) nao existe: cria com a senha em hash (nunca a senha pura no banco)
+        String sql = "INSERT INTO usuario (nome, email, senha, status, tipo) VALUES (?, ?, ?, 'ATIVO', 'ADMIN')";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, "Administrador");
+            ps.setString(2, adminEmail);
+            ps.setString(3, SenhaUtil.gerarHash(adminSenha));
+            ps.executeUpdate();
+        }
+    }
+
 
     private void criarDisciplinasBase(Connection c) throws SQLException {
         String sql = "INSERT INTO disciplina (nome, semestre) SELECT ?, ? WHERE NOT EXISTS " +

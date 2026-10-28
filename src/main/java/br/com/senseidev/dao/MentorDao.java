@@ -49,8 +49,8 @@ public class MentorDao {
     /** Registra usuário e perfil de mentor de forma atômica. */
     public int cadastrarMentor(String nome, String email, String senhaHash,
                                Integer semestreAtual, String fotoUrl) throws SQLException {
-        String sqlUsuario = "INSERT INTO usuario (nome, email, senha, semestre_atual, foto_url, status) "
-                + "VALUES (?, ?, ?, ?, ?, 'ATIVO')";
+        String sqlUsuario = "INSERT INTO usuario (nome, email, senha, semestre_atual, foto_url, status, tipo) "
+                + "VALUES (?, ?, ?, ?, ?, 'ATIVO', 'MENTOR')";
         String sqlPerfil = "INSERT INTO mentor_perfil (id, descricao, experiencia, nota_media, total_mentorias) "
                 + "VALUES (?, '', '', 0, 0)";
         try (Connection c = Conexao.abrir(contexto)) {
@@ -89,8 +89,8 @@ public class MentorDao {
      */
     public int cadastrarMentorando(String nome, String email, String senhaHash,
                                    Integer semestreAtual, String fotoUrl) throws SQLException {
-        String sqlUsuario = "INSERT INTO usuario (nome, email, senha, semestre_atual, foto_url, status) "
-                + "VALUES (?, ?, ?, ?, ?, 'ATIVO')";
+        String sqlUsuario = "INSERT INTO usuario (nome, email, senha, semestre_atual, foto_url, status , tipo) "
+                + "VALUES (?, ?, ?, ?, ?, 'ATIVO', 'MENTORANDO')";
         String sqlPerfil = "INSERT INTO mentorando_perfil (id) VALUES (?)";
 
         try (Connection c = Conexao.abrir(contexto)) {
@@ -130,7 +130,8 @@ public class MentorDao {
     public br.com.senseidev.model.UsuarioAutenticado autenticarUsuario(String email, String senha)
             throws SQLException {
         String sql = "SELECT u.id, u.nome, u.senha, "
-                + "CASE WHEN mp.id IS NOT NULL THEN 'MENTOR' "
+                + "CASE WHEN u.tipo = 'ADMIN' THEN 'ADMIN'"
+                + "WHEN mp.id IS NOT NULL THEN 'MENTOR'"
                 + "WHEN ap.id IS NOT NULL THEN 'MENTORANDO' ELSE NULL END AS tipo "
                 + "FROM usuario u "
                 + "LEFT JOIN mentor_perfil mp ON mp.id = u.id "
