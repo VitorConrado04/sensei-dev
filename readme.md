@@ -218,30 +218,61 @@ Central de notificações e lembretes do mentorando.
 
 Tela de perfil do mentorando, com disciplinas de interesse.
 
-## 8. Ambiente de desenvolvimento (primeira parte do Marco 2)
+## 8. Ambiente de desenvolvimento
 
 ### Tecnologias
 - Java 11 e Maven
 - Servlets, JSP e JSTL (sem framework) e JDBC puro
 - Tomcat 7 embutido (plugin `tomcat7-maven-plugin`)
-- Banco H2 2.1.214 em arquivo, versionado no repositório
+- Banco H2 2.1.214 em arquivo, criado automaticamente na primeira execução
 
 ### Estrutura do projeto
 - `pom.xml`: dependências e plugins do Maven
-- `src/main/java/br/com/senseidev/`: pacotes `dao`, `model` e `servlet`
-- `src/main/webapp/`: páginas JSP/HTML, `css`, `js`, `img` e `WEB-INF/web.xml`
-- `db/sensei.mv.db`: banco H2 com as 13 tabelas, sem dados
-- `escopo_db/`: DBML, SQL do PostgreSQL, SQL do H2 (`banco_h2.sql`) e MER
+- `src/main/java/br/com/senseidev/`
+    - `model`: classes de dados
+    - `dao`: acesso ao banco (um DAO por entidade, com JDBC)
+    - `servlet`: controladores
+    - `filter`: `AutenticacaoFiltro` (protege as rotas por login e por tipo de usuário)
+    - `listener`: `InicializadorBanco` (cria tabelas, disciplinas e o admin ao subir)
+    - `util`: `SenhaUtil` (hash PBKDF2 das senhas)
+- `src/main/webapp/WEB-INF/views/`: páginas JSP (`admin`, `aluno`, `conta`, ...)
+- `src/main/webapp/WEB-INF/fragmentos/`: cabeçalhos reutilizáveis
+- `escopo_db/`: DBML, SQL do PostgreSQL, SQL do H2 e MER
 - `imagens/`: protótipos
 
 ### Banco de dados
-O arquivo `db/sensei.mv.db` contém as 13 tabelas do modelo e nenhum dado. Ele foi
-criado a partir de `escopo_db/banco_h2.sql`, que é a adaptação do `banco_relacional.sql` (PostgreSQL) para o H2. A conexão é aberta pelo `DbStarter`,
-configurado no `web.xml` (URL `jdbc:h2:./db/sensei`, usuário `sa`, senha `sa`).
+O banco **não é versionado**. Ao subir o Tomcat, o `InicializadorBanco` cria o arquivo
+`db/sensei.mv.db` com as 13 tabelas, as disciplinas base e o usuário administrador.
+Cada pessoa tem o seu banco local, e para zerar basta parar o Tomcat e apagar a pasta `db/`.
+A URL é `jdbc:h2:./db/sensei` (usuário `sa`, senha `sa`), configurada no `web.xml`.
+O modelo relacional original está em `escopo_db/banco_h2.sql`.
 
 ### Como executar
 1. Abrir o projeto no IntelliJ com JDK 11.
-2. No painel Maven, executar `tomcat7:run` (ou `mvn tomcat7:run` na raiz do projeto).
+2. Na raiz do projeto, executar `mvn tomcat7:run` (ou `tomcat7:run` no painel Maven).
+   Atenção: o goal é `run`, e `deploy` não funciona.
 3. Aplicação: http://localhost:8080
-4. Console do H2: http://localhost:8080/console (driver `org.h2.Driver`, URL `jdbc:h2:./db/sensei`, usuário `sa`, senha `sa`). 
-5. O console abre com `jdbc:h2:~/test` preenchido, então é preciso trocar a URL
+4. Console do H2: http://localhost:8080/console (driver `org.h2.Driver`,
+   URL `jdbc:h2:./db/sensei`, usuário `sa`, senha `sa`). O console abre com
+   `jdbc:h2:~/test` preenchido, então é preciso trocar a URL.
+
+### Perfis de acesso
+| Perfil | Como entra | Área |
+|---|---|---|
+| Mentor | Cadastro na tela inicial | Área do mentor e "Minha conta" |
+| Mentorando | Cadastro na tela inicial | Início do aluno e "Minha conta" |
+| Administrador | Não tem cadastro: é criado pelo sistema | `/admin/inicio` |
+
+Login inicial do administrador: `admin@sensei.dev` / `admin12345`
+(senha de desenvolvimento, para ser trocada antes de qualquer uso real).
+
+### Administração
+- **Usuários** (`/admin/usuarios`): listar, editar, suspender/reativar e excluir mentores e mentorandos.
+  O administrador não pode ser suspenso nem excluído, e o e-mail dele é fixo.
+- **Disciplinas** (`/admin/disciplinas`): criar, editar e excluir. A exclusão é recusada
+  se a disciplina estiver em uso.
+- Contas suspensas não conseguem fazer login.
+
+### Conta do usuário
+Mentor e mentorando editam nome, e-mail, semestre e senha em `/conta`.
+O usuário editado é sempre o da sessão.
