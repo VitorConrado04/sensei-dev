@@ -1,0 +1,20 @@
+/* Disposição do protótipo do perfil do mentorando; reutiliza as cores e fontes de mentor.css. */
+.perfil-topo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.perfil-aluno-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 5vw, 6rem); margin-top: 2.25rem; }
+.perfil-aluno-grid > div { min-width: 0; }
+.perfil-aluno-grid .cartao { background: var(--card); border-radius: 30px; padding: 2rem; }
+.resumo-aluno { min-height: 180px; display: flex; align-items: center; gap: 1.5rem; }
+.resumo-aluno > div { min-width: 0; }
+.resumo-aluno strong, .resumo-curso { display: block; font-family: var(--fonte-titulo); overflow-wrap: anywhere; }
+.resumo-aluno strong { font-size: clamp(1.2rem, 2vw, 1.8rem); font-weight: 400; }
+.resumo-curso { color: var(--suave); font-size: .9rem; margin-bottom: .35rem; }
+.secao-aluno { margin: 1.5rem 0 .7rem; }.interesse-titulo { margin-top: 0; }
+.descricao-aluno { min-height: 310px; }.interesse-aluno { min-height: 260px; color: var(--suave); }
+.aviso { padding: .75rem 1rem; margin-top: 1rem; border-radius: 10px; }.sucesso { background: #244a38; }.erro { background: #662d38; }
+#dialog-edicao { width: min(92vw, 480px); margin: auto; padding: 2rem; border: 0; border-radius: 24px; color: var(--texto); background: var(--card); }
+#dialog-edicao::backdrop { background: rgba(0,0,0,.7); }
+#dialog-edicao form { display: grid; gap: .9rem; }#dialog-edicao h2 { margin-bottom: .7rem; }#dialog-edicao label { font-family: var(--fonte-titulo); }
+#dialog-edicao select, #dialog-edicao input[type=file] { width: 100%; padding: .7rem; border: 1px solid var(--suave); border-radius: 8px; background: var(--bg-escuro); color: var(--texto); font: inherit; }
+#dialog-edicao .ajuda { color: var(--suave); font-size: .9rem; }
+#dialog-edicao .dialog-acoes { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: flex-end; margin-top: 1rem; }
+@media (max-width: 850px) { .perfil-aluno-grid { grid-template-columns: 1fr; } .interesse-titulo { margin-top: 1rem; } }

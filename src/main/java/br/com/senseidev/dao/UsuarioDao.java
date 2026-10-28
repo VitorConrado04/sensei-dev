@@ -118,6 +118,17 @@ public class UsuarioDao {
         }
     }
 
+    /** Atualiza apenas o perfil da conta de mentorando autenticada. */
+    public boolean atualizarPerfilMentorando(int id, int semestre, String fotoUrl) throws SQLException {
+        String sql = "UPDATE usuario SET semestre_atual = ?, foto_url = ? WHERE id = ? AND tipo = 'MENTORANDO'";
+        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, semestre);
+            ps.setString(2, fotoUrl);
+            ps.setInt(3, id);
+            return ps.executeUpdate() == 1;
+        }
+    }
+
     // Transforma a linha atual do resultado em um objeto UsuarioResumo
     private UsuarioResumo montar(ResultSet rs) throws SQLException {
         // semestre_atual pode ser NULL no banco; getInt devolveria 0, entao confere com wasNull

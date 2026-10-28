@@ -16,6 +16,7 @@
         <p>Sua conta de mentorando foi autenticada com sucesso.</p>
         <p>Esta é a área inicial da conta. As funções de procurar mentores e solicitar mentorias ainda precisam ser desenvolvidas.</p>
         <p><a href="${pageContext.request.contextPath}/conta">Minha conta</a></p>
+        <p><a href="${pageContext.request.contextPath}/perfil-aluno">Meu perfil</a></p>
         <p><a href="${pageContext.request.contextPath}/logout">Sair da conta</a></p>
     </section>
 </main>
