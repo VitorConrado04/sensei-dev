@@ -4,6 +4,7 @@ import br.com.senseidev.auth.TokenFavorito;
 import br.com.senseidev.dao.DisciplinaDao;
 import br.com.senseidev.dao.FavoritoDao;
 import br.com.senseidev.dao.MentorBuscaDao;
+import br.com.senseidev.dao.MentoriasAlunoDao;
 import br.com.senseidev.dao.UsuarioDao;
 import br.com.senseidev.model.Disciplina;
 import br.com.senseidev.model.MentorBusca;
@@ -60,6 +61,8 @@ public class InicioAlunoServlet extends HttpServlet {
                 }
             }
             req.setAttribute("usuario", usuario);
+            req.setAttribute("proximasMentorias", new MentoriasAlunoDao(getServletContext())
+                    .listarProximas(usuario.getId()));
             req.setAttribute("disciplinas", disciplinas);
             req.setAttribute("semestre", semestre);
             req.setAttribute("notaMinima", notaMinima);

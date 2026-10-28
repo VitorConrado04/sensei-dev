@@ -10,7 +10,7 @@
     <title>Encontre seu mentor | SENSEI.DEV</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600&family=Bruno+Ace&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${ctx}/css/mentor.css?v=p2-08"><link rel="stylesheet" href="${ctx}/css/inicio-aluno.css">
+    <link rel="stylesheet" href="${ctx}/css/mentor.css?v=p2-08"><link rel="stylesheet" href="${ctx}/css/inicio-aluno.css?v=p2-10">
 </head>
 <body>
 <header class="topo topo-mentorando">
@@ -28,6 +28,23 @@
     <a class="logo" href="${ctx}/inicio-aluno">SENSEI.DEV</a>
 </header>
 <main class="conteudo busca-layout">
+    <section class="resumo-mentorias" aria-labelledby="titulo-proximas">
+        <div class="resumo-mentorias-topo">
+            <h2 id="titulo-proximas" class="titulo-secao">Próximas mentorias</h2>
+            <a href="${ctx}/mentorias-aluno">Ver todas</a>
+        </div>
+        <c:choose>
+            <c:when test="${empty proximasMentorias}"><p class="vazio">Você ainda não tem mentorias futuras.</p></c:when>
+            <c:otherwise><div class="resumo-mentorias-lista"><c:forEach var="mentoria" items="${proximasMentorias}">
+                <a class="resumo-mentoria" href="${ctx}/mentorias-aluno#mentoria-${mentoria.id}">
+                    <strong><c:out value="${mentoria.disciplina}"/></strong>
+                    <span>Com <c:out value="${mentoria.mentorNome}"/></span>
+                    <span><c:out value="${mentoria.dataTexto}"/> às <c:out value="${mentoria.horaTexto}"/></span>
+                    <span class="resumo-status status-${mentoria.status}"><c:choose><c:when test="${mentoria.status == 'CONFIRMADA'}">Confirmada</c:when><c:otherwise>Pendente</c:otherwise></c:choose></span>
+                </a>
+            </c:forEach></div></c:otherwise>
+        </c:choose>
+    </section>
     <form class="filtros" action="${ctx}/inicio-aluno" method="get" aria-labelledby="titulo-busca">
         <h1 id="titulo-busca" class="titulo-secao">Encontre seu Mentor</h1>
         <p>Escolha sua matéria:</p>

@@ -1,5 +1,16 @@
 /* Busca na tela inicial do mentorando, seguindo o protótipo do README. */
 .busca-layout { display: grid; grid-template-columns: minmax(18rem, 31%) minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 3.5rem); align-items: start; }
+.resumo-mentorias { grid-column: 1 / -1; min-width: 0; background: #393438; border-radius: 30px; padding: 1.2rem clamp(1.2rem, 2vw, 2rem); }
+.resumo-mentorias-topo { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1rem; margin-bottom: .9rem; }
+.resumo-mentorias-topo a { color: var(--roxo-claro); text-underline-offset: .2rem; }
+.resumo-mentorias-lista { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .8rem; }
+.resumo-mentoria { min-width: 0; display: grid; gap: .4rem; padding: 1rem 1.2rem; border-radius: 18px; background: #4b4558; color: var(--texto); text-decoration: none; overflow-wrap: anywhere; }
+.resumo-mentoria:hover, .resumo-mentoria:focus-visible { background: #575066; }
+.resumo-mentoria strong { font: 400 .95rem var(--fonte-titulo); }
+.resumo-mentoria span { font-size: .88rem; }
+.resumo-status { justify-self: start; padding: .2rem .55rem; border-radius: 8px; }
+.resumo-status.status-PENDENTE { background: #f4e3b3; color: #493b19; }
+.resumo-status.status-CONFIRMADA { background: #c3efd0; color: #19452b; }
 .filtros { background: #4b4558; border-radius: 30px; padding: clamp(1.4rem, 3vw, 2.5rem); display: flex; flex-direction: column; gap: 1.5rem; }
 .filtros h1 { text-align: center; }
 .filtros > p { text-align: center; font-family: var(--fonte-titulo); }
@@ -45,5 +56,5 @@
 .favorito-item span { font-family: var(--fonte-titulo); overflow-wrap: anywhere; }
 .favorito-item small { color: var(--suave); font-family: var(--fonte-corpo); }
 .favorito-item button { background: transparent; border: 0; color: var(--roxo-claro); font-size: .85rem; }
-@media (max-width: 900px) { .busca-layout { grid-template-columns: 1fr; }.materias { max-height: 13rem; } }
+@media (max-width: 900px) { .busca-layout { grid-template-columns: 1fr; }.materias { max-height: 13rem; }.resumo-mentorias-lista { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 560px) { .mentor-card-topo { flex-wrap: wrap; }.mentor-nota { width: 100%; margin: 0 0 0 4.3rem; }.mentor-card p, .mentor-acao { margin-left: 0; margin-right: .5rem; } }
