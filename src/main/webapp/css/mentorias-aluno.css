@@ -22,3 +22,19 @@
 .estado-CANCELADA { background: #f0ccd0; color: #612c35; }
 @media (max-width: 850px) { .mentorias-lista { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 600px) { .mentoria-card { padding: 1.3rem; border-radius: 26px; } .mentoria-detalhes { font-family: var(--fonte-corpo); } .mentoria-estado { flex-wrap: wrap; } }
+.mentoria-acoes { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem 1.2rem; margin-top: .5rem; }
+.mentoria-acao { display: inline-block; padding: .45rem .8rem; border: 1px solid var(--roxo-claro); border-radius: 10px; background: transparent; color: var(--texto); font: 400 .85rem var(--fonte-corpo); text-decoration: none; cursor: pointer; }
+.mentoria-acao.reagendar { color: var(--verde); border-color: var(--verde); }
+.mentoria-acao.cancelar { color: var(--vermelho); border-color: var(--vermelho); }
+.mentoria-acao:hover, .mentoria-acao:focus-visible { background: var(--card-alto); }
+.mentoria-aviso { max-width: 54rem; margin: .5rem auto 1rem; padding: .75rem 1rem; border-radius: 10px; }
+.mentoria-aviso.sucesso { background: #304c3c; color: #e4ffeb; }
+.mentoria-aviso.erro { background: #643a42; color: #fff0f0; }
+.reagendar-mentoria { margin-top: .5rem; padding-top: 1rem; border-top: 1px solid #716a7d; }
+.reagendar-mentoria h4 { font: 400 1rem var(--fonte-titulo); }
+.reagendar-mentoria p { margin-top: .5rem; line-height: 1.4; }
+.reagendar-data, .reagendar-enviar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .6rem .8rem; align-items: end; margin-top: 1rem; }
+.reagendar-data label, .reagendar-enviar label { font-size: .85rem; }
+.reagendar-data input, .reagendar-data select, .reagendar-enviar select { box-sizing: border-box; min-width: 0; width: 100%; padding: .55rem .7rem; border: 1px solid var(--roxo-claro); border-radius: 10px; background: var(--card-alto); color: var(--texto); font: inherit; }
+.reagendar-data button, .reagendar-enviar button { justify-self: start; }
+@media (max-width: 600px) { .reagendar-data, .reagendar-enviar { grid-template-columns: minmax(0, 1fr); } }

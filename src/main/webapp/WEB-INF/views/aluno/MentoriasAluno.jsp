@@ -8,7 +8,7 @@
     <title>Minhas mentorias | SENSEI.DEV</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600&family=Bruno+Ace&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${ctx}/css/mentor.css?v=p2-08"><link rel="stylesheet" href="${ctx}/css/mentorias-aluno.css?v=3">
+    <link rel="stylesheet" href="${ctx}/css/mentor.css?v=p2-08"><link rel="stylesheet" href="${ctx}/css/mentorias-aluno.css?v=p2-09-cores">
 </head>
 <body>
 <header class="topo topo-mentorando">
@@ -27,6 +27,9 @@
 </header>
 <main class="conteudo minhas-mentorias">
     <h1 class="mentorias-titulo">Minhas Mentorias</h1>
+    <c:if test="${param.resultado == 'cancelada'}"><p class="mentoria-aviso sucesso" role="status">Mentoria cancelada.</p></c:if>
+    <c:if test="${param.resultado == 'reagendada'}"><p class="mentoria-aviso sucesso" role="status">Novo horário solicitado. Aguarde a confirmação do mentor.</p></c:if>
+    <c:if test="${param.resultado == 'indisponivel'}"><p class="mentoria-aviso erro" role="alert">Não foi possível alterar a mentoria. Verifique se ela ainda está disponível.</p></c:if>
     <nav class="atalhos-mentorias" aria-label="Seções das mentorias">
         <a href="#futuras">Próximas</a><a href="#realizadas">Realizadas</a><a href="#canceladas">Canceladas</a>
     </nav>
@@ -37,12 +40,58 @@
                 <c:choose>
                     <c:when test="${empty grupo.mentorias}"><p class="vazio"><c:out value="${grupo.mensagemVazia}"/></p></c:when>
                     <c:otherwise><div class="mentorias-lista"><c:forEach var="mentoria" items="${grupo.mentorias}">
-                        <article class="mentoria-card">
+                        <article id="mentoria-${mentoria.id}" class="mentoria-card">
                             <h3><c:out value="${mentoria.disciplina}"/></h3>
                             <p class="mentoria-objetivo"><c:out value="${mentoria.objetivo}"/></p>
                             <p class="mentoria-mentor">Com <c:choose><c:when test="${mentoria.mentorAtivo}"><c:url var="urlMentor" value="/mentor-publico"><c:param name="id" value="${mentoria.mentorId}"/></c:url><a href="${urlMentor}"><c:out value="${mentoria.mentorNome}"/></a></c:when><c:otherwise><c:out value="${mentoria.mentorNome}"/></c:otherwise></c:choose></p>
                             <div class="mentoria-detalhes"><span><c:out value="${mentoria.dataTexto}"/></span><span><c:out value="${mentoria.horaTexto}"/></span><span><c:choose><c:when test="${mentoria.duracaoMinutos == 60}">1 hora</c:when><c:when test="${mentoria.duracaoMinutos == 120}">2 horas</c:when><c:otherwise><c:out value="${mentoria.duracaoMinutos}"/> min</c:otherwise></c:choose></span></div>
                             <div class="mentoria-estado"><span>Status:</span><strong class="estado estado-${mentoria.status}"><c:choose><c:when test="${mentoria.status == 'PENDENTE'}">Pendente</c:when><c:when test="${mentoria.status == 'CONFIRMADA'}">Confirmada</c:when><c:when test="${mentoria.status == 'REALIZADA'}">Realizada</c:when><c:when test="${mentoria.status == 'CANCELADA'}">Cancelada</c:when><c:otherwise><c:out value="${mentoria.status}"/></c:otherwise></c:choose></strong></div>
+                            <c:if test="${mentoria.podeAlterar}">
+                                <div class="mentoria-acoes">
+                                    <a class="mentoria-acao reagendar" href="${ctx}/mentorias-aluno?reagendar=${mentoria.id}#mentoria-${mentoria.id}">Reagendar</a>
+                                    <form action="${ctx}/mentorias-aluno" method="post">
+                                        <input type="hidden" name="token" value="${tokenMentoria}">
+                                        <input type="hidden" name="id" value="${mentoria.id}">
+                                        <input type="hidden" name="acao" value="cancelar">
+                                        <button class="mentoria-acao cancelar" type="submit">Cancelar mentoria</button>
+                                    </form>
+                                </div>
+                            </c:if>
+                            <c:if test="${not empty mentoriaSelecionada and mentoriaSelecionada.id == mentoria.id}">
+                                <div class="reagendar-mentoria">
+                                    <h4>Escolher outro horário</h4>
+                                    <p>A nova solicitação ficará pendente de confirmação.</p>
+                                    <form class="reagendar-data" action="${ctx}/mentorias-aluno#mentoria-${mentoria.id}" method="get">
+                                        <input type="hidden" name="reagendar" value="${mentoria.id}">
+                                        <label for="data-${mentoria.id}">Data</label>
+                                        <input id="data-${mentoria.id}" name="data" type="date" min="${dataMinima}" value="${dataSelecionada}" required>
+                                        <label for="duracao-${mentoria.id}">Duração</label>
+                                        <select id="duracao-${mentoria.id}" name="duracao">
+                                            <option value="60" ${duracaoSelecionada == 60 ? 'selected' : ''}>1 hora</option>
+                                            <option value="120" ${duracaoSelecionada == 120 ? 'selected' : ''}>2 horas</option>
+                                        </select>
+                                        <button class="mentoria-acao" type="submit">Ver horários</button>
+                                    </form>
+                                    <c:if test="${dataInvalida}"><p class="mentoria-aviso erro" role="alert">Escolha uma data válida.</p></c:if>
+                                    <c:if test="${not empty dataSelecionada}">
+                                        <c:choose>
+                                            <c:when test="${empty horariosReagendamento}"><p class="vazio">Não há horários livres nessa data.</p></c:when>
+                                            <c:otherwise>
+                                                <form class="reagendar-enviar" action="${ctx}/mentorias-aluno" method="post">
+                                                    <input type="hidden" name="token" value="${tokenMentoria}">
+                                                    <input type="hidden" name="id" value="${mentoria.id}">
+                                                    <input type="hidden" name="acao" value="reagendar">
+                                                    <input type="hidden" name="data" value="${dataSelecionada}">
+                                                    <input type="hidden" name="duracao" value="${duracaoSelecionada}">
+                                                    <label for="hora-${mentoria.id}">Horário</label>
+                                                    <select id="hora-${mentoria.id}" name="hora" required><c:forEach var="hora" items="${horariosReagendamento}"><option value="${hora}">${hora}</option></c:forEach></select>
+                                                    <button class="mentoria-acao" type="submit">Solicitar novo horário</button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:if>
+                                </div>
+                            </c:if>
                         </article>
                     </c:forEach></div></c:otherwise>
                 </c:choose>

@@ -29,7 +29,7 @@ public class SolicitacaoMentoriaDao {
         }
     }
 
-    private List<String> horariosCadastrados(Connection c, int mentorId, LocalDate data,
+    List<String> horariosCadastrados(Connection c, int mentorId, LocalDate data,
                                              int duracaoMinutos) throws SQLException {
         List<String> opcoes = new ArrayList<>();
         if (data == null || data.isBefore(LocalDate.now())

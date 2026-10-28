@@ -42,6 +42,10 @@ public class MentoriaAluno {
     public LocalDateTime getInicio() { return inicio; }
     public LocalDateTime getFim() { return fim; }
     public String getStatus() { return status; }
+    public boolean isPodeAlterar() {
+        return ("PENDENTE".equals(status) || "CONFIRMADA".equals(status))
+                && inicio.isAfter(LocalDateTime.now());
+    }
     public String getDataTexto() { return inicio.format(DATA); }
     public String getHoraTexto() { return inicio.format(HORA); }
     public long getDuracaoMinutos() { return Duration.between(inicio, fim).toMinutes(); }

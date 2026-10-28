@@ -276,19 +276,3 @@ Login inicial do administrador: `admin@sensei.dev` / `admin12345`
 ### Conta do usuário
 Mentor e mentorando editam nome, e-mail, semestre e senha em `/conta`.
 O usuário editado é sempre o da sessão.
-
-### Busca e perfil do mentor
-- O mentorando autenticado usa `/inicio-aluno` para filtrar mentores ativos por
-  disciplina, semestre da disciplina e avaliação mínima. É possível selecionar
-  um resultado e abrir seu perfil.
-- `/mentor-publico?id=...` mostra descrição, experiência, disciplinas,
-  avaliações e a disponibilidade semanal cadastrada. O perfil é somente de
-  leitura e exige sessão de mentorando.
-- A escolha de uma data e o envio de uma solicitação de mentoria pertencem à
-  etapa P2-06; a grade semanal ainda não confirma uma vaga em uma data específica.
-- Na P2-05, o mentorando pode salvar e remover mentores favoritos na busca ou
-  no perfil público. A lista "Meus favoritos" fica na própria página inicial.
-- Na P2-06, o perfil público permite escolher data e duração, consultar os
-  horários semanais cadastrados pelo mentor e enviar uma solicitação com
-  disciplina e objetivo. O pedido entra em `mentoria` com status `PENDENTE`.
-  A prevenção de conflitos com sessões ocupadas e bloqueios pertence à P2-07.
