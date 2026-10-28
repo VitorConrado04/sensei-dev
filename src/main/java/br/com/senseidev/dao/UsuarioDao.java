@@ -93,6 +93,31 @@ public class UsuarioDao {
         }
     }
 
+    // Busca o hash da senha guardado no banco (para conferir a senha atual na troca de senha)
+    public String buscarHashSenha(int id) throws SQLException {
+        String sql = "SELECT senha FROM usuario WHERE id = ?";
+
+        try (Connection c = Conexao.abrir(contexto);
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? rs.getString(1) : null;
+            }
+        }
+    }
+
+    // Grava a senha nova (ja em hash) do usuario
+    public void atualizarSenha(int id, String novoHash) throws SQLException {
+        String sql = "UPDATE usuario SET senha = ? WHERE id = ?";
+
+        try (Connection c = Conexao.abrir(contexto);
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, novoHash);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        }
+    }
+
     // Transforma a linha atual do resultado em um objeto UsuarioResumo
     private UsuarioResumo montar(ResultSet rs) throws SQLException {
         // semestre_atual pode ser NULL no banco; getInt devolveria 0, entao confere com wasNull

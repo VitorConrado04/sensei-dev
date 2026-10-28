@@ -15,6 +15,7 @@
         <h1 id="titulo-admin">Olá, <c:out value="${sessionScope.usuarioNome}"/>!</h1>
         <p>Painel do administrador. Aqui vai ficar o gerenciamento de usuários e disciplinas.</p>
         <p><a href="${pageContext.request.contextPath}/admin/usuarios">Gerenciar usuários</a></p>
+        <p><a href="${pageContext.request.contextPath}/admin/disciplinas">Gerenciar disciplinas</a></p>
         <p><a href="${pageContext.request.contextPath}/logout">Sair da conta</a></p>
     </section>
 </main>

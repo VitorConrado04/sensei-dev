@@ -13,7 +13,7 @@ import java.io.IOException;
 /** Protege rotas privadas e impede que um mentorando navegue na área do mentor. */
 @WebFilter(urlPatterns = {
         "/mentor-inicio", "/mentor-perfil", "/mentor-material", "/mentor-avaliacao", "/inicio-aluno",
-        "/admin/*"
+        "/admin/*", "/conta"
 })
 public class AutenticacaoFiltro implements Filter {
     @Override public void init(FilterConfig filterConfig) { }
@@ -39,6 +39,16 @@ public class AutenticacaoFiltro implements Filter {
         }
 
         String rota = req.getServletPath();
+        // /conta e aberta para mentor e mentorando (cada um edita a propria conta)
+        if (rota.equals("/conta")) {
+            if ("MENTOR".equals(tipo) || "MENTORANDO".equals(tipo)) {
+                chain.doFilter(request, response);
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/admin/inicio");
+            }
+            return;
+        }
+
         String tipoEsperado;
         if (rota.startsWith("/admin")) tipoEsperado = "ADMIN";
         else if (rota.equals("/inicio-aluno")) tipoEsperado = "MENTORANDO";

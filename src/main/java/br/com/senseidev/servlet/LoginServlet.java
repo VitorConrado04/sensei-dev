@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Locale;
 
-/** Autentica mentores e mentorandos usando as credenciais armazenadas no H2. */
+/**
+ * Autentica mentores e mentorandos usando as credenciais armazenadas no H2.
+ */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -55,10 +57,9 @@ public class LoginServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/mentor-inicio");
             } else if ("MENTORANDO".equals(usuario.getTipo())) {
                 resp.sendRedirect(req.getContextPath() + "/inicio-aluno");
-            } else if("ADMIN".equals(usuario.getTipo())) {
+            } else if ("ADMIN".equals(usuario.getTipo())) {
                 resp.sendRedirect(req.getContextPath() + "/admin/inicio");
-            }
-            else {
+            } else {
                 sessao.invalidate();
                 resp.sendRedirect(req.getContextPath() + "/LoginArea.jsp?erro=credenciais");
             }
