@@ -76,6 +76,9 @@ public class InicializadorBanco implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
         try (Connection c = Conexao.abrir(event.getServletContext()); Statement st = c.createStatement()) {
+
+            for (String sql : ESTRUTURA) st.execute(sql);
+
             // Coluna TIPO da tabela USUARIO (ADMIN, MENTOR ou MENTORANDO).
             st.execute("ALTER TABLE usuario ADD COLUMN IF NOT EXISTS tipo VARCHAR(20) NOT NULL DEFAULT 'MENTORANDO'");
             st.execute("ALTER TABLE usuario ADD CONSTRAINT IF NOT EXISTS ck_usuario_tipo CHECK (tipo IN ('ADMIN', 'MENTOR', 'MENTORANDO'))");
@@ -83,10 +86,10 @@ public class InicializadorBanco implements ServletContextListener {
             st.execute("UPDATE usuario SET tipo = 'MENTOR' WHERE id IN (SELECT id FROM mentor_perfil)");
             st.execute("UPDATE usuario SET tipo = 'MENTORANDO' WHERE id IN (SELECT id FROM mentorando_perfil)");
 
-            for (String sql : ESTRUTURA) st.execute(sql);
             criarAdminInicial(c);
             criarDisciplinasBase(c);
             event.getServletContext().log("Banco Sensei.dev verificado; tabelas existentes foram preservadas.");
+
         } catch (SQLException e) {
             event.getServletContext().log("Falha ao preparar o banco H2 do Sensei.dev.", e);
             throw new IllegalStateException("Não foi possível preparar o banco de dados Sensei.dev.", e);
