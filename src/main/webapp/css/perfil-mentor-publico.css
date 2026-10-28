@@ -1,0 +1,23 @@
+/* Perfil somente de leitura do mentor, baseado no protótipo PerfilMentor.png. */
+.voltar-busca { color: var(--roxo-claro); text-decoration: none; font-family: var(--fonte-titulo); }
+.voltar-busca:hover { text-decoration: underline; }
+.titulo-perfil-publico { margin: 1.2rem 0 1.5rem; }
+.perfil-publico { grid-template-columns: minmax(0, 38rem) minmax(0, 1fr); }
+.perfil-publico > div, .perfil-publico > section { min-width: 0; }
+.perfil-publico .titulo-secao { margin: 2rem 0 1rem; }
+.perfil-publico .cartao { overflow-wrap: anywhere; }
+.resumo-mentor { min-width: 0; }
+.resumo-mentor #perfil-meta { flex-wrap: wrap; }
+.lista-disciplinas small { color: var(--suave); font-family: var(--fonte-corpo); font-size: .85rem; }
+.avaliacoes-publicas { display: grid; gap: 1rem; }
+.avaliacao-publica { padding: 1.2rem 1.5rem; }
+.avaliacao-publica-topo { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+.avaliacao-publica-topo strong { font-family: var(--fonte-titulo); font-weight: 400; }
+.avaliacao-publica-topo span { flex: none; color: var(--roxo-claro); }
+.avaliacao-publica small { display: block; color: var(--suave); margin-top: .3rem; }
+.avaliacao-publica p { margin-top: .7rem; white-space: pre-wrap; }
+.disponibilidade-publica { min-width: 0; }
+.disponibilidade-publica .grade-titulo { margin: 0 0 1.4rem; }
+.nota-disponibilidade { color: var(--suave); font-size: .85rem; margin-top: 1rem; }
+@media (max-width: 1100px) { .perfil-publico { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 700px) { .avaliacao-publica-topo { align-items: flex-start; } }

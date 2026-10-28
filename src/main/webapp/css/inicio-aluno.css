@@ -1,0 +1,36 @@
+/* Busca na tela inicial do mentorando, seguindo o protótipo do README. */
+.busca-layout { display: grid; grid-template-columns: minmax(18rem, 31%) minmax(0, 1fr); gap: clamp(1.5rem, 3vw, 3.5rem); align-items: start; }
+.filtros { background: #4b4558; border-radius: 30px; padding: clamp(1.4rem, 3vw, 2.5rem); display: flex; flex-direction: column; gap: 1.5rem; }
+.filtros h1 { text-align: center; }
+.filtros > p { text-align: center; font-family: var(--fonte-titulo); }
+.campo-semestre, .campo-nota { display: flex; align-items: center; gap: .75rem; font-family: var(--fonte-titulo); }
+.campo-semestre select, .campo-nota select { min-width: 0; flex: 1; padding: .7rem .8rem; border: 0; border-radius: 10px; background: #686176; color: #fff; font: inherit; }
+.campo-nota { flex-wrap: wrap; }
+.materias { border: 0; display: grid; gap: .9rem; max-height: 26rem; overflow-y: auto; padding: .1rem .35rem .1rem .1rem; }
+.materia { display: flex; align-items: center; gap: .8rem; min-width: 0; font-family: var(--fonte-titulo); font-size: .9rem; cursor: pointer; }
+.materia input { width: 1.25rem; height: 1.25rem; flex: none; accent-color: #6a4fa5; }
+.materia span { overflow-wrap: anywhere; }
+.acoes-busca { display: grid; justify-items: center; gap: .8rem; }
+.btn-busca { width: 100%; background: #553c94; font-size: 1.15rem; }
+.acoes-busca a { color: #eee; text-underline-offset: .2rem; }
+.resultados { min-width: 0; }
+.resultados h2 { text-align: center; }
+.resultado-contagem { text-align: center; color: var(--suave); margin: .55rem 0 1.5rem; }
+.lista-mentores { display: grid; gap: 1.4rem; }
+.mentor-card { min-width: 0; background: #393438; border-radius: 30px; padding: 1.2rem clamp(1.2rem, 2vw, 2rem); }
+.mentor-card-selecionado { outline: 2px solid var(--roxo-claro); }
+.mentor-card-topo { display: flex; align-items: center; gap: 1rem; min-width: 0; }
+.mentor-avatar { width: 3.3rem; height: 3.3rem; flex: none; border-radius: 50%; background: #5a4393; display: grid; place-items: center; font-family: var(--fonte-titulo); font-size: 1.3rem; }
+.mentor-card h3 { font-family: var(--fonte-titulo); font-weight: 400; font-size: 1.1rem; min-width: 0; overflow-wrap: anywhere; }
+.mentor-nota { margin-left: auto; color: #eee; white-space: nowrap; }
+.mentor-nota small { color: #bdb8c2; }
+.mentor-card p { margin: .9rem 0 0 4.3rem; color: #c6c2c8; overflow-wrap: anywhere; }
+.mentor-acao { display: inline-block; margin: 1rem 0 0 4.3rem; padding: .55rem 1rem; border-radius: 999px; background: #553c94; color: #fff; font-family: var(--fonte-titulo); font-size: .82rem; text-decoration: none; }
+.mentor-acao:hover { background: var(--roxo); }
+.mentor-acao-atual { background: #514967; }
+.mentor-acao-perfil { margin-left: .6rem; background: #514967; }
+.mentor-selecionado { background: #4b4558; border: 2px solid var(--roxo-claro); border-radius: 28px; padding: 1.5rem; margin-bottom: 1.5rem; scroll-margin-top: 1rem; }
+.etiqueta-selecionado { display: inline-block; margin-bottom: .65rem; color: #dbceff; font-family: var(--fonte-titulo); font-size: .75rem; }
+.mentor-selecionado h3 { font-family: var(--fonte-titulo); font-size: 1.25rem; font-weight: 400; }
+@media (max-width: 900px) { .busca-layout { grid-template-columns: 1fr; }.materias { max-height: 13rem; } }
+@media (max-width: 560px) { .mentor-card-topo { flex-wrap: wrap; }.mentor-nota { width: 100%; margin: 0 0 0 4.3rem; }.mentor-card p, .mentor-acao { margin-left: 0; margin-right: .5rem; } }
