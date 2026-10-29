@@ -478,3 +478,118 @@ a.cal-nav { color: inherit; text-decoration: none; }
 .celula-toggle input:checked + .cel-botao .txt-x { display: none; }
 .celula-toggle:hover .cel-botao { border-color: var(--roxo-claro); }
 .celula-toggle input:focus-visible + .cel-botao { outline: 2px solid var(--roxo-claro); outline-offset: 3px; }
+.perfil.editando .opcoes-disciplinas.so-edicao { display: grid; gap: 0.9rem; }
+.opcao-disciplina { display: flex; align-items: center; gap: 0.8rem; font-family: var(--fonte-titulo); font-size: 0.95rem; cursor: pointer; }
+.opcao-disciplina input { width: 1.1rem; height: 1.1rem; accent-color: var(--roxo); }
+.opcao-disciplina small { display: block; margin-top: 0.15rem; font-family: var(--fonte-corpo); font-size: 0.75rem; color: var(--suave);
+    .pilula-acao.realizar { color: var(--roxo-claro); }
+    .pilula-acao.realizar:hover { background: var(--card-alto);}}
+/* Selo de notificações não lidas no menu */
+.selo-notif { display: inline-grid; place-items: center; min-width: 1.25rem; height: 1.25rem; margin-left: 0.4rem; padding: 0 0.35rem; border-radius: 999px; background: var(--roxo); color: #fff; font-size: 0.72rem; line-height: 1; }
+
+/* Tela de notificações */
+.notificacoes-topo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.lista-notificacoes { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: 0.8rem; }
+.notificacao { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1rem 1.2rem; border-radius: 14px; background: var(--card); }
+.notificacao.nao-lida { border-left: 4px solid var(--roxo); }
+.notificacao p { margin: 0 0 0.25rem; }
+.notificacao small { color: var(--suave); }
+.notificacao-link { margin-left: 0.8rem; color: var(--roxo-claro); }
+.notificacao-acoes { display: flex; gap: 0.6rem; }
+.notificacao-acoes form { margin: 0; }
+.notificacao-botao { font-family: var(--fonte-titulo); font-size: 0.8rem; color: var(--texto); background: transparent; border: 1px solid var(--roxo); border-radius: 999px; padding: 0.4rem 0.9rem; cursor: pointer; }
+.notificacao-botao:hover { background: var(--card-alto); }
+
+/* ---------- Agenda: visões dia / semana / mês ---------- */
+.cal-visoes { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+.cal-visoes a {
+    padding: 0.4rem 1.1rem;
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--texto);
+    font-family: var(--fonte-titulo);
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+.cal-visoes a:hover { background: var(--card-alto); }
+.cal-visoes a[aria-current="page"] { background: var(--roxo); }
+.cal-visoes a.cal-hoje { margin-left: auto; background: transparent; border: 1px solid var(--roxo); }
+
+a.cal-num { text-decoration: none; }
+a.cal-num:hover { color: var(--texto); }
+
+.cal-evento.bloqueio {
+    border-left-color: var(--vermelho);
+    background: repeating-linear-gradient(135deg, rgba(255, 90, 82, 0.22), rgba(255, 90, 82, 0.22) 6px, rgba(255, 90, 82, 0.1) 6px, rgba(255, 90, 82, 0.1) 12px);
+}
+
+/* semana: uma coluna por dia, eventos empilhados */
+.cal-semana th { padding: 0.8rem 0.2rem; }
+.cal-semana th a { color: inherit; text-decoration: none; }
+.cal-semana th a:hover { color: var(--roxo-claro); }
+.cal-semana th.hoje a { color: var(--roxo-claro); }
+.cal-semana .cal-dia { height: auto; min-height: 12rem; }
+.cal-semana .cal-evento { white-space: normal; line-height: 1.25; padding: 0.3rem 0.45rem; }
+
+/* dia: lista de horários */
+.agenda-dia { display: grid; gap: 0.8rem; }
+.agenda-item {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.9rem 1.2rem;
+    border-left: 4px solid var(--roxo);
+    border-radius: 14px;
+    background: rgba(106, 79, 165, 0.35);
+}
+.agenda-item.pendente { background: rgba(106, 79, 165, 0.15); border-left-style: dashed; }
+.agenda-item.bloqueio { border-left-color: var(--vermelho); background: rgba(255, 90, 82, 0.15); }
+.agenda-item strong { font-family: var(--fonte-titulo); font-weight: 400; }
+.agenda-item span { font-size: 0.9rem; color: var(--suave); }
+
+/* ---------- Página de agenda: bloqueios e horários semanais ---------- */
+.agenda-colunas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    gap: 3rem;
+    margin-top: 1.6rem;
+    align-items: start;
+}
+.agenda-colunas .titulo-secao { font-size: clamp(1.1rem, 1.8vw, 1.5rem); margin-bottom: 1rem; }
+.form-bloqueio { margin-bottom: 1.4rem; }
+.grupo-linha { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.dica { margin: -0.4rem 0 1rem 0.7rem; font-size: 0.8rem; color: var(--suave); }
+.lista-agenda { display: grid; gap: 0.8rem; }
+.item-agenda { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem 1.4rem; border-radius: 24px; }
+.item-agenda > div { display: grid; gap: 0.15rem; }
+.item-agenda span { font-size: 0.9rem; color: var(--suave); }
+.item-agenda small { font-size: 0.8rem; color: var(--suave); overflow-wrap: anywhere; }
+.item-agenda form { margin: 0; }
+.agenda-dia-titulo { margin-top: 0.6rem; font-family: var(--fonte-titulo); font-size: 0.9rem; color: var(--roxo-claro); }
+.link-suave { color: var(--roxo-claro); }
+.pilula-acao.confirmada { cursor: default; white-space: nowrap; }
+
+/* ---------- Material: editar, descrição e vínculo ---------- */
+.material-descricao { font-size: 0.9rem; color: var(--suave); overflow-wrap: anywhere; }
+.material-acoes { display: flex; justify-content: flex-end; gap: 0.5rem; }
+.material-acoes .material-remover { text-align: right; }
+.btn-editar-material {
+    padding: 0.3rem 0.9rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--roxo-claro);
+    font-family: var(--fonte-titulo);
+    font-size: 0.7rem;
+}
+.btn-editar-material:hover { background: var(--card-alto); }
+.grupo textarea, .grupo select {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background: var(--campo);
+    font: inherit;
+    color: #111;
+}
+.grupo textarea { resize: vertical; }
+.grupo textarea:focus-visible, .grupo select:focus-visible { outline: none; border-color: var(--roxo); background: #e8e8e8; }

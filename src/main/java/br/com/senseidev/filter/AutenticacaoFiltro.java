@@ -1,5 +1,7 @@
 package br.com.senseidev.filter;
 
+import br.com.senseidev.dao.NotificacaoDao;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -9,12 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 
 /** Protege rotas privadas e impede que um mentorando navegue na área do mentor. */
 @WebFilter(urlPatterns = {
-        "/mentor-inicio", "/mentor-perfil", "/mentor-material", "/mentor-avaliacao", "/inicio-aluno",
+        "/mentor-inicio", "/mentor-agenda", "/mentor-perfil", "/mentor-material", "/mentor-avaliacao", "/inicio-aluno",
         "/admin/*", "/conta", "/perfil-aluno", "/interesses-aluno", "/mentor-publico", "/favoritos-aluno",
-        "/solicitar-mentoria", "/mentorias-aluno"
+        "/solicitar-mentoria", "/mentorias-aluno", "/avaliar-sessao", "/notificacoes"
 })
 public class AutenticacaoFiltro implements Filter {
     @Override public void init(FilterConfig filterConfig) { }
@@ -39,9 +42,19 @@ public class AutenticacaoFiltro implements Filter {
             return;
         }
 
+        // Quantidade de notificações não lidas, para o selo no menu
+        if ("GET".equals(req.getMethod()) && ("MENTOR".equals(tipo) || "MENTORANDO".equals(tipo))) {
+            try {
+                req.setAttribute("notificacoesNaoLidas", new NotificacaoDao(req.getServletContext())
+                        .contarNaoLidas(((Number) id).intValue()));
+            } catch (SQLException e) {
+                req.getServletContext().log("Não foi possível contar as notificações.", e);
+            }
+        }
+
         String rota = req.getServletPath();
-        // /conta e aberta para mentor e mentorando (cada um edita a propria conta)
-        if (rota.equals("/conta")) {
+        // /conta e /notificacoes sao abertas para mentor e mentorando
+        if (rota.equals("/conta") || rota.equals("/notificacoes")) {
             if ("MENTOR".equals(tipo) || "MENTORANDO".equals(tipo)) {
                 chain.doFilter(request, response);
             } else {
@@ -55,7 +68,7 @@ public class AutenticacaoFiltro implements Filter {
         else if (rota.equals("/inicio-aluno") || rota.equals("/perfil-aluno")
                 || rota.equals("/interesses-aluno") || rota.equals("/mentor-publico")
                 || rota.equals("/favoritos-aluno") || rota.equals("/solicitar-mentoria")
-                || rota.equals("/mentorias-aluno")) tipoEsperado = "MENTORANDO";
+                || rota.equals("/mentorias-aluno") || rota.equals("/avaliar-sessao")) tipoEsperado = "MENTORANDO";
         else tipoEsperado = "MENTOR";
 
         // Conta do tipo errado e mandada para a propria area

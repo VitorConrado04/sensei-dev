@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%-- Cabeçalho das 4 telas do mentor. Cada tela inclui este arquivo e manda
+<%-- Cabeçalho das telas do mentor. Cada tela inclui este arquivo e manda
      a aba ativa por jsp:param (aqui vira ${param.aba}, igual o ${param.id} do lab 5).
      O objeto "mentor" vem do servlet. Fica em WEB-INF pra não abrir direto pela URL. --%>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -28,9 +28,13 @@
 
     <nav class="abas" aria-label="Navegação do mentor">
         <a class="aba" href="${ctx}/mentor-inicio" <c:if test="${param.aba == 'inicio'}">aria-current="page"</c:if>>Início</a>
+        <a class="aba" href="${ctx}/mentor-agenda" <c:if test="${param.aba == 'agenda'}">aria-current="page"</c:if>>Agenda</a>
         <a class="aba" href="${ctx}/mentor-material" <c:if test="${param.aba == 'material'}">aria-current="page"</c:if>>Material</a>
         <a class="aba" href="${ctx}/mentor-avaliacao" <c:if test="${param.aba == 'avaliacao'}">aria-current="page"</c:if>>Avaliação</a>
         <a class="aba" href="${ctx}/mentor-perfil" <c:if test="${param.aba == 'perfil'}">aria-current="page"</c:if>>Perfil</a>
+        <jsp:include page="/WEB-INF/fragmentos/link-notificacoes.jsp">
+            <jsp:param name="atual" value="${param.aba == 'notificacoes' ? 'sim' : 'nao'}"/>
+        </jsp:include>
         <a class="aba" href="${ctx}/conta">Minha conta</a>
         <a class="aba" href="${ctx}/logout">Sair</a>
     </nav>

@@ -8,7 +8,7 @@
     <title>Minhas mentorias | SENSEI.DEV</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600&family=Bruno+Ace&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${ctx}/css/mentor.css?v=p2-08"><link rel="stylesheet" href="${ctx}/css/mentorias-aluno.css?v=p2-09-cores">
+    <link rel="stylesheet" href="${ctx}/css/mentor.css?v=p2-08"><link rel="stylesheet" href="${ctx}/css/mentorias-aluno.css?v=p3-10">
 </head>
 <body>
 <header class="topo topo-mentorando">
@@ -21,6 +21,7 @@
     </div>
     <nav class="abas" aria-label="Navegação do mentorando">
         <a class="aba" href="${ctx}/inicio-aluno">Início</a><a class="aba" href="${ctx}/mentorias-aluno" aria-current="page">Mentorias</a>
+        <jsp:include page="/WEB-INF/fragmentos/link-notificacoes.jsp"/>
         <a class="aba" href="${ctx}/perfil-aluno">Perfil</a><a class="aba" href="${ctx}/conta">Minha conta</a><a class="aba" href="${ctx}/logout">Sair</a>
     </nav>
     <a class="logo" href="${ctx}/inicio-aluno">SENSEI.DEV</a>
@@ -30,6 +31,8 @@
     <c:if test="${param.resultado == 'cancelada'}"><p class="mentoria-aviso sucesso" role="status">Mentoria cancelada.</p></c:if>
     <c:if test="${param.resultado == 'reagendada'}"><p class="mentoria-aviso sucesso" role="status">Novo horário solicitado. Aguarde a confirmação do mentor.</p></c:if>
     <c:if test="${param.resultado == 'indisponivel'}"><p class="mentoria-aviso erro" role="alert">Não foi possível alterar a mentoria. Verifique se ela ainda está disponível.</p></c:if>
+    <c:if test="${param.resultado == 'avaliada'}"><p class="mentoria-aviso sucesso" role="status">Avaliação enviada. Obrigado!</p></c:if>
+    <c:if test="${param.resultado == 'avaliacao-indisponivel'}"><p class="mentoria-aviso erro" role="alert">Não foi possível avaliar esta sessão. Ela pode já ter sido avaliada.</p></c:if>
     <nav class="atalhos-mentorias" aria-label="Seções das mentorias">
         <a href="#futuras">Próximas</a><a href="#realizadas">Realizadas</a><a href="#canceladas">Canceladas</a>
     </nav>
@@ -46,6 +49,36 @@
                             <p class="mentoria-mentor">Com <c:choose><c:when test="${mentoria.mentorAtivo}"><c:url var="urlMentor" value="/mentor-publico"><c:param name="id" value="${mentoria.mentorId}"/></c:url><a href="${urlMentor}"><c:out value="${mentoria.mentorNome}"/></a></c:when><c:otherwise><c:out value="${mentoria.mentorNome}"/></c:otherwise></c:choose></p>
                             <div class="mentoria-detalhes"><span><c:out value="${mentoria.dataTexto}"/></span><span><c:out value="${mentoria.horaTexto}"/></span><span><c:choose><c:when test="${mentoria.duracaoMinutos == 60}">1 hora</c:when><c:when test="${mentoria.duracaoMinutos == 120}">2 horas</c:when><c:otherwise><c:out value="${mentoria.duracaoMinutos}"/> min</c:otherwise></c:choose></span></div>
                             <div class="mentoria-estado"><span>Status:</span><strong class="estado estado-${mentoria.status}"><c:choose><c:when test="${mentoria.status == 'PENDENTE'}">Pendente</c:when><c:when test="${mentoria.status == 'CONFIRMADA'}">Confirmada</c:when><c:when test="${mentoria.status == 'REALIZADA'}">Realizada</c:when><c:when test="${mentoria.status == 'CANCELADA'}">Cancelada</c:when><c:otherwise><c:out value="${mentoria.status}"/></c:otherwise></c:choose></strong></div>
+
+                            <%-- materiais que o mentor vinculou a esta mentoria --%>
+                            <c:set var="materiais" value="${materiaisPorMentoria[mentoria.id]}"/>
+                            <c:if test="${not empty materiais}">
+                                <div class="mentoria-materiais">
+                                    <h4>Materiais do mentor</h4>
+                                    <ul>
+                                        <c:forEach var="material" items="${materiais}">
+                                            <li>
+                                                <a href="<c:out value='${material.url}'/>" target="_blank" rel="noopener noreferrer"><c:out value="${material.titulo}"/></a>
+                                                <c:if test="${not empty material.descricao}"><small><c:out value="${material.descricao}"/></small></c:if>
+                                            </li>
+                                        </c:forEach>
+                                    </ul>
+                                </div>
+                            </c:if>
+
+                            <c:if test="${mentoria.status == 'REALIZADA'}">
+                                <div class="mentoria-acoes">
+                                    <c:choose>
+                                        <c:when test="${mentoria.nota != null}">
+                                            <span>Sua avaliação: <strong><c:out value="${mentoria.nota}"/></strong></span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a class="mentoria-acao" href="${ctx}/avaliar-sessao?id=${mentoria.id}">Avaliar sessão</a>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </c:if>
+
                             <c:if test="${mentoria.podeAlterar}">
                                 <div class="mentoria-acoes">
                                     <a class="mentoria-acao reagendar" href="${ctx}/mentorias-aluno?reagendar=${mentoria.id}#mentoria-${mentoria.id}">Reagendar</a>

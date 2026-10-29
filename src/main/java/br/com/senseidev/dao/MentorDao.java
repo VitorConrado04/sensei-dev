@@ -2,7 +2,9 @@ package br.com.senseidev.dao;
 
 import br.com.senseidev.auth.SenhaUtil;
 import br.com.senseidev.model.Avaliacao;
+import br.com.senseidev.model.Bloqueio;
 import br.com.senseidev.model.HorarioGrade;
+import br.com.senseidev.model.HorarioSemanal;
 import br.com.senseidev.model.Material;
 import br.com.senseidev.model.Mentor;
 import br.com.senseidev.model.Sessao;
@@ -17,6 +19,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -262,33 +265,42 @@ public class MentorDao {
 
     private Set<String> buscarSlotsAgendados(int mentorId) throws SQLException {
         Set<String> slots = new HashSet<>();
-        String sql = "SELECT data_hora_inicio FROM mentoria WHERE mentor_id=? "
-                + "AND status IN ('PENDENTE','CONFIRMADA') AND data_hora_inicio >= CURRENT_TIMESTAMP";
+        String sql = "SELECT data_hora_inicio, data_hora_fim FROM mentoria WHERE mentor_id=? "
+                + "AND status IN ('PENDENTE','CONFIRMADA') AND data_hora_fim > CURRENT_TIMESTAMP";
         try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, mentorId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Timestamp ts = rs.getTimestamp(1);
-                    if (ts == null) continue;
-                    LocalDateTime inicio = ts.toLocalDateTime();
-                    int dia = inicio.getDayOfWeek().getValue(); // segunda=1 ... sábado=6
-                    if (dia >= 1 && dia <= 6) slots.add(chaveSlot(inicio.getHour(), dia - 1));
+                    Timestamp ini = rs.getTimestamp(1);
+                    Timestamp fim = rs.getTimestamp(2);
+                    if (ini == null || fim == null) continue;
+                    // marca cada hora coberta pela sessão (uma sessão de 2h ocupa dois horários da grade)
+                    LocalDateTime hora = ini.toLocalDateTime().withMinute(0).withSecond(0).withNano(0);
+                    LocalDateTime limite = fim.toLocalDateTime();
+                    while (hora.isBefore(limite)) {
+                        int dia = hora.getDayOfWeek().getValue(); // segunda=1 ... sábado=6
+                        if (dia >= 1 && dia <= 6) slots.add(chaveSlot(hora.getHour(), dia - 1));
+                        hora = hora.plusHours(1);
+                    }
                 }
             }
         }
         return slots;
     }
 
-    /** Atualiza descrição e disponibilidade sem sobrescrever horários com sessões marcadas. */
-    public void salvarPerfil(int mentorId, String descricao, List<String> marcados) throws SQLException {
+    /** Atualiza descrição, experiência e disponibilidade sem sobrescrever horários com sessões marcadas. */
+    public void salvarPerfil(int mentorId, String descricao, String experiencia,
+                             List<String> marcados) throws SQLException {
         Set<String> selecionados = new HashSet<>(marcados == null ? Collections.emptyList() : marcados);
         Set<String> agendados = buscarSlotsAgendados(mentorId);
         try (Connection c = Conexao.abrir(contexto)) {
             c.setAutoCommit(false);
             try {
-                try (PreparedStatement ps = c.prepareStatement("UPDATE mentor_perfil SET descricao=? WHERE id=?")) {
+                try (PreparedStatement ps = c.prepareStatement(
+                        "UPDATE mentor_perfil SET descricao=?, experiencia=? WHERE id=?")) {
                     ps.setString(1, descricao);
-                    ps.setInt(2, mentorId);
+                    ps.setString(2, experiencia);
+                    ps.setInt(3, mentorId);
                     if (ps.executeUpdate() == 0) throw new SQLException("Perfil de mentor não encontrado.");
                 }
                 for (int hora = PRIMEIRA_HORA; hora <= ULTIMA_HORA; hora++) {
@@ -299,17 +311,27 @@ public class MentorDao {
                         String inicio = String.format(java.util.Locale.ROOT, "%02d:00", hora);
                         String fim = String.format(java.util.Locale.ROOT, "%02d:00", hora + 1);
                         boolean ativo = selecionados.contains(chave);
+                        if (!ativo) {
+                            // horário desmarcado: apaga a linha de vez (sem deixar registro inativo)
+                            try (PreparedStatement ps = c.prepareStatement(
+                                    "DELETE FROM disponibilidade WHERE mentor_id=? AND dia_semana=? AND hora_inicio=?")) {
+                                ps.setInt(1, mentorId);
+                                ps.setInt(2, diaBanco);
+                                ps.setString(3, inicio);
+                                ps.executeUpdate();
+                            }
+                            continue;
+                        }
                         int atualizados;
                         try (PreparedStatement ps = c.prepareStatement(
-                                "UPDATE disponibilidade SET ativo=?, hora_fim=? WHERE mentor_id=? AND dia_semana=? AND hora_inicio=?")) {
-                            ps.setBoolean(1, ativo);
-                            ps.setString(2, fim);
-                            ps.setInt(3, mentorId);
-                            ps.setInt(4, diaBanco);
-                            ps.setString(5, inicio);
+                                "UPDATE disponibilidade SET ativo=TRUE, hora_fim=? WHERE mentor_id=? AND dia_semana=? AND hora_inicio=?")) {
+                            ps.setString(1, fim);
+                            ps.setInt(2, mentorId);
+                            ps.setInt(3, diaBanco);
+                            ps.setString(4, inicio);
                             atualizados = ps.executeUpdate();
                         }
-                        if (atualizados == 0 && ativo) {
+                        if (atualizados == 0) {
                             try (PreparedStatement ps = c.prepareStatement(
                                     "INSERT INTO disponibilidade (mentor_id, dia_semana, hora_inicio, hora_fim, ativo) VALUES (?,?,?,?,TRUE)")) {
                                 ps.setInt(1, mentorId);
@@ -326,6 +348,95 @@ public class MentorDao {
                 rollback(c, e);
                 throw e;
             }
+        }
+    }
+
+    /** Horários semanais cadastrados (um por linha), já marcando quais têm sessão agendada. */
+    public List<HorarioSemanal> listarHorariosSemanais(int mentorId) throws SQLException {
+        Set<String> agendados = buscarSlotsAgendados(mentorId);
+        String sql = "SELECT id, dia_semana, hora_inicio, hora_fim FROM disponibilidade "
+                + "WHERE mentor_id=? AND ativo=TRUE ORDER BY dia_semana, hora_inicio";
+        List<HorarioSemanal> lista = new ArrayList<>();
+        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, mentorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int dia = rs.getInt("dia_semana");
+                    LocalTime hora = parseHora(rs.getString("hora_inicio"));
+                    boolean agendado = hora != null && dia >= 1 && dia <= 6
+                            && agendados.contains(chaveSlot(hora.getHour(), dia - 1));
+                    lista.add(new HorarioSemanal(rs.getInt("id"), dia, rs.getString("hora_inicio"),
+                            rs.getString("hora_fim"), agendado));
+                }
+            }
+        }
+        return lista;
+    }
+
+    /** Remove de vez um horário semanal. Devolve false se não existe ou se tem sessão marcada. */
+    public boolean removerHorarioSemanal(int mentorId, int horarioId) throws SQLException {
+        for (HorarioSemanal h : listarHorariosSemanais(mentorId)) {
+            if (h.getId() == horarioId && h.isAgendado()) return false;
+        }
+        String sql = "DELETE FROM disponibilidade WHERE id=? AND mentor_id=?";
+        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, horarioId);
+            ps.setInt(2, mentorId);
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+    /** Bloqueios do mentor entre as datas (inclusive). Se "ate" for null, não há data final. */
+    public List<Bloqueio> listarBloqueios(int mentorId, LocalDate de, LocalDate ate) throws SQLException {
+        String sql = "SELECT id, data, hora_inicio, hora_fim, motivo FROM bloqueio_horario "
+                + "WHERE mentor_id=? AND data>=? " + (ate == null ? "" : "AND data<=? ")
+                + "ORDER BY data, hora_inicio";
+        List<Bloqueio> lista = new ArrayList<>();
+        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, mentorId);
+            ps.setDate(2, java.sql.Date.valueOf(de));
+            if (ate != null) ps.setDate(3, java.sql.Date.valueOf(ate));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(new Bloqueio(rs.getInt("id"), rs.getDate("data").toLocalDate(),
+                            rs.getString("hora_inicio"), rs.getString("hora_fim"), rs.getString("motivo")));
+                }
+            }
+        }
+        return lista;
+    }
+
+    /**
+     * Cria um bloqueio. horaInicio/horaFim null = dia inteiro.
+     * Devolve false (sem gravar) se já existe sessão PENDENTE/CONFIRMADA dentro do período.
+     */
+    public boolean inserirBloqueio(int mentorId, LocalDate data, String horaInicio, String horaFim,
+                                   String motivo) throws SQLException {
+        boolean diaInteiro = horaInicio == null || horaFim == null;
+        LocalDateTime de = diaInteiro ? data.atStartOfDay() : LocalDateTime.of(data, LocalTime.parse(horaInicio));
+        LocalDateTime ate = diaInteiro ? data.plusDays(1).atStartOfDay() : LocalDateTime.of(data, LocalTime.parse(horaFim));
+        try (Connection c = Conexao.abrir(contexto)) {
+            if (ConflitoHorario.ocupado(c, mentorId, 0, de, ate)) return false;
+            String sql = "INSERT INTO bloqueio_horario (mentor_id, data, hora_inicio, hora_fim, motivo) VALUES (?,?,?,?,?)";
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setInt(1, mentorId);
+                ps.setDate(2, java.sql.Date.valueOf(data));
+                if (diaInteiro) { ps.setNull(3, java.sql.Types.VARCHAR); ps.setNull(4, java.sql.Types.VARCHAR); }
+                else { ps.setString(3, horaInicio); ps.setString(4, horaFim); }
+                if (motivo == null || motivo.isEmpty()) ps.setNull(5, java.sql.Types.VARCHAR);
+                else ps.setString(5, motivo);
+                ps.executeUpdate();
+            }
+        }
+        return true;
+    }
+
+    public void removerBloqueio(int mentorId, int bloqueioId) throws SQLException {
+        String sql = "DELETE FROM bloqueio_horario WHERE id=? AND mentor_id=?";
+        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, bloqueioId);
+            ps.setInt(2, mentorId);
+            ps.executeUpdate();
         }
     }
 
@@ -364,12 +475,37 @@ public class MentorDao {
             ps.setString(1, status);
             ps.setInt(2, sessaoId);
             ps.setInt(3, mentorId);
-            ps.executeUpdate();
+            if (ps.executeUpdate() == 1) {
+                String texto = "CONFIRMADA".equals(status)
+                        ? "{nome} confirmou a sua mentoria de {quando}."
+                        : "{nome} cancelou a sua mentoria de {quando}.";
+                NotificacaoDao.avisar(c, sessaoId, "MENTORANDO", status, texto);
+            }
+        }
+    }
+
+    /** Marca como REALIZADA uma sessão confirmada que já começou. Devolve false se não foi possível. */
+    public boolean marcarComoRealizada(int mentorId, int sessaoId) throws SQLException {
+        String sql = "UPDATE mentoria SET status='REALIZADA', atualizado_em=CURRENT_TIMESTAMP "
+                + "WHERE id=? AND mentor_id=? AND status='CONFIRMADA' "
+                + "AND data_hora_inicio <= CURRENT_TIMESTAMP";
+        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, sessaoId);
+            ps.setInt(2, mentorId);
+            if (ps.executeUpdate() != 1) return false;
+            NotificacaoDao.avisar(c, sessaoId, "MENTORANDO", "REALIZADA",
+                    "A mentoria de {quando} com {nome} foi marcada como realizada. Que tal avaliar a sessão?");
+            return true;
         }
     }
 
     public List<Material> listarMateriais(int mentorId) throws SQLException {
-        String sql = "SELECT id, titulo, arquivo_url, criado_em FROM material WHERE mentor_id=? ORDER BY criado_em DESC";
+        String sql = "SELECT mt.id, mt.titulo, mt.descricao, mt.arquivo_url, mt.criado_em, mt.mentoria_id, "
+                + "d.nome AS disciplina, u.nome AS aluno_nome, m.data_hora_inicio "
+                + "FROM material mt LEFT JOIN mentoria m ON m.id=mt.mentoria_id "
+                + "LEFT JOIN disciplina d ON d.id=m.disciplina_id "
+                + "LEFT JOIN usuario u ON u.id=m.mentorando_id "
+                + "WHERE mt.mentor_id=? ORDER BY mt.criado_em DESC, mt.id DESC";
         List<Material> lista = new ArrayList<>();
         try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, mentorId);
@@ -377,22 +513,92 @@ public class MentorDao {
                 while (rs.next()) {
                     Timestamp ts = rs.getTimestamp("criado_em");
                     LocalDateTime criadoEm = ts == null ? LocalDateTime.now() : ts.toLocalDateTime();
-                    lista.add(new Material(rs.getInt("id"), rs.getString("titulo"),
-                            rs.getString("arquivo_url"), criadoEm, 0));
+                    int vinculo = rs.getInt("mentoria_id");
+                    Integer mentoriaId = rs.wasNull() ? null : vinculo;
+                    String texto = null;
+                    if (mentoriaId != null) {
+                        Timestamp quando = rs.getTimestamp("data_hora_inicio");
+                        texto = rs.getString("disciplina") + " · " + br.com.senseidev.util.Formato.primeiroNome(rs.getString("aluno_nome"))
+                                + (quando == null ? "" : " · " + quando.toLocalDateTime()
+                                .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM HH:mm")));
+                    }
+                    lista.add(new Material(rs.getInt("id"), rs.getString("titulo"), rs.getString("descricao"),
+                            rs.getString("arquivo_url"), criadoEm, mentoriaId, texto));
                 }
             }
         }
         return lista;
     }
 
-    public void inserirMaterial(int mentorId, String titulo, String url) throws SQLException {
-        String sql = "INSERT INTO material (mentor_id, titulo, arquivo_url) VALUES (?, ?, ?)";
-        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, mentorId);
-            ps.setString(2, titulo);
-            ps.setString(3, url);
-            ps.executeUpdate();
+    /** A mentoria existe, é deste mentor e não está cancelada? (só assim o material pode ser vinculado) */
+    private boolean mentoriaDoMentor(Connection c, int mentorId, int mentoriaId) throws SQLException {
+        String sql = "SELECT 1 FROM mentoria WHERE id=? AND mentor_id=? AND status<>'CANCELADA'";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, mentoriaId);
+            ps.setInt(2, mentorId);
+            try (ResultSet rs = ps.executeQuery()) { return rs.next(); }
         }
+    }
+
+    private static void definirMentoria(PreparedStatement ps, int indice, Integer mentoriaId) throws SQLException {
+        if (mentoriaId == null) ps.setNull(indice, java.sql.Types.INTEGER);
+        else ps.setInt(indice, mentoriaId);
+    }
+
+    /** Cria o material. Devolve false (sem gravar) se a mentoria vinculada não for deste mentor. */
+    public boolean inserirMaterial(int mentorId, String titulo, String url, String descricao,
+                                   Integer mentoriaId) throws SQLException {
+        String sql = "INSERT INTO material (mentor_id, mentoria_id, titulo, descricao, arquivo_url) VALUES (?, ?, ?, ?, ?)";
+        try (Connection c = Conexao.abrir(contexto)) {
+            if (mentoriaId != null && !mentoriaDoMentor(c, mentorId, mentoriaId)) return false;
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setInt(1, mentorId);
+                definirMentoria(ps, 2, mentoriaId);
+                ps.setString(3, titulo);
+                ps.setString(4, descricao);
+                ps.setString(5, url);
+                ps.executeUpdate();
+            }
+            if (mentoriaId != null) avisarMaterial(c, mentoriaId);
+        }
+        return true;
+    }
+
+    /** Edita título, link, descrição e vínculo. Devolve false se o material não é do mentor ou o vínculo é inválido. */
+    public boolean editarMaterial(int mentorId, int materialId, String titulo, String url, String descricao,
+                                  Integer mentoriaId) throws SQLException {
+        try (Connection c = Conexao.abrir(contexto)) {
+            Integer anterior = null;
+            try (PreparedStatement ps = c.prepareStatement(
+                    "SELECT mentoria_id FROM material WHERE id=? AND mentor_id=?")) {
+                ps.setInt(1, materialId);
+                ps.setInt(2, mentorId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) return false;
+                    int valor = rs.getInt(1);
+                    anterior = rs.wasNull() ? null : valor;
+                }
+            }
+            boolean mudouVinculo = mentoriaId != null && !mentoriaId.equals(anterior);
+            if (mudouVinculo && !mentoriaDoMentor(c, mentorId, mentoriaId)) return false;
+            String sql = "UPDATE material SET titulo=?, arquivo_url=?, descricao=?, mentoria_id=? WHERE id=? AND mentor_id=?";
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setString(1, titulo);
+                ps.setString(2, url);
+                ps.setString(3, descricao);
+                definirMentoria(ps, 4, mentoriaId);
+                ps.setInt(5, materialId);
+                ps.setInt(6, mentorId);
+                if (ps.executeUpdate() != 1) return false;
+            }
+            if (mudouVinculo) avisarMaterial(c, mentoriaId);
+        }
+        return true;
+    }
+
+    private void avisarMaterial(Connection c, int mentoriaId) throws SQLException {
+        NotificacaoDao.avisar(c, mentoriaId, "MENTORANDO", "NOVO_MATERIAL",
+                "{nome} disponibilizou um material para a mentoria de {quando}.");
     }
 
     public void removerMaterial(int mentorId, int materialId) throws SQLException {

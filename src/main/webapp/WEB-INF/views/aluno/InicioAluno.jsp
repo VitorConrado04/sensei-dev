@@ -23,6 +23,7 @@
     </div>
     <nav class="abas" aria-label="Navegação do mentorando">
         <a class="aba" href="${ctx}/inicio-aluno" aria-current="page">Início</a><a class="aba" href="${ctx}/mentorias-aluno">Mentorias</a><a class="aba" href="${ctx}/perfil-aluno">Perfil</a>
+        <jsp:include page="/WEB-INF/fragmentos/link-notificacoes.jsp"/>
         <a class="aba" href="${ctx}/conta">Minha conta</a><a class="aba" href="${ctx}/logout">Sair</a>
     </nav>
     <a class="logo" href="${ctx}/inicio-aluno">SENSEI.DEV</a>

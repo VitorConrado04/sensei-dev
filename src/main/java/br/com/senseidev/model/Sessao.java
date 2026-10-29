@@ -3,6 +3,7 @@ package br.com.senseidev.model;
 import br.com.senseidev.util.Formato;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 // uma linha da tabela mentoria, já com o nome do mentorando e da disciplina
 // (no banco isso vem de um JOIN com usuario e disciplina)
@@ -74,5 +75,35 @@ public class Sessao {
 
     public String getIniciais() {
         return Formato.iniciais(alunoNome);
+    }
+
+    public boolean isJaComecou() {
+        return inicio != null && !inicio.isAfter(LocalDateTime.now());
+    }
+
+    // ---- usados pela agenda (visões dia/semana/mês) e pelo vínculo de material ----
+
+    public LocalDateTime getFim() {
+        return inicio.plusHours(horas);
+    }
+
+    // "14:00 às 16:00"
+    public String getPeriodoTexto() {
+        return Formato.hora(inicio) + " às " + Formato.hora(getFim());
+    }
+
+    // "2h"
+    public String getDuracaoTexto() {
+        return horas + "h";
+    }
+
+    // "12/11 14:00"
+    public String getDataHoraTexto() {
+        return inicio.format(DateTimeFormatter.ofPattern("dd/MM HH:mm"));
+    }
+
+    // "Banco de Dados · Ana · 12/11 14:00" (texto do select de vincular material)
+    public String getRotulo() {
+        return disciplina + " · " + getAlunoPrimeiroNome() + " · " + getDataHoraTexto();
     }
 }

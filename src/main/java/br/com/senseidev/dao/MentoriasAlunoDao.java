@@ -16,9 +16,10 @@ import java.util.List;
 public class MentoriasAlunoDao {
     private static final String COLUNAS = "SELECT m.id, m.mentor_id, u.nome AS mentor_nome, " +
             "u.status AS mentor_status, d.nome AS disciplina, m.objetivo, " +
-            "m.data_hora_inicio, m.data_hora_fim, m.status " +
+            "m.data_hora_inicio, m.data_hora_fim, m.status, a.nota_final " +
             "FROM mentoria m JOIN usuario u ON u.id = m.mentor_id " +
-            "JOIN disciplina d ON d.id = m.disciplina_id ";
+            "JOIN disciplina d ON d.id = m.disciplina_id " +
+            "LEFT JOIN avaliacao a ON a.mentoria_id = m.id ";
     private final ServletContext contexto;
 
     public MentoriasAlunoDao(ServletContext contexto) { this.contexto = contexto; }
@@ -47,10 +48,25 @@ public class MentoriasAlunoDao {
                     Timestamp inicio = rs.getTimestamp("data_hora_inicio");
                     Timestamp fim = rs.getTimestamp("data_hora_fim");
                     if (inicio == null || fim == null) continue;
-                    lista.add(new MentoriaAluno(rs.getInt("id"), rs.getInt("mentor_id"),
-                            rs.getString("mentor_nome"), "ATIVO".equals(rs.getString("mentor_status")),
-                            rs.getString("disciplina"), rs.getString("objetivo"),
-                            inicio.toLocalDateTime(), fim.toLocalDateTime(), rs.getString("status")));
+
+                    MentoriaAluno mentoria = new MentoriaAluno(
+                            rs.getInt("id"),
+                            rs.getInt("mentor_id"),
+                            rs.getString("mentor_nome"),
+                            "ATIVO".equals(rs.getString("mentor_status")),
+                            rs.getString("disciplina"),
+                            rs.getString("objetivo"),
+                            inicio.toLocalDateTime(),
+                            fim.toLocalDateTime(),
+                            rs.getString("status")
+                    );
+
+                    double nota = rs.getDouble("nota_final");
+                    if (!rs.wasNull()) {
+                        mentoria.setNota(nota);
+                    }
+
+                    lista.add(mentoria);
                 }
             }
         }

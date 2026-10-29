@@ -47,7 +47,7 @@ public class AlteracaoMentoriaDao {
         if (mentoria == null || !mentoria.isMentorAtivo() || data == null) return livres;
         try (Connection c = Conexao.abrir(contexto)) {
             for (String hora : new SolicitacaoMentoriaDao(contexto).horariosCadastrados(
-                    c, mentoria.getMentorId(), data, duracaoMinutos)) {
+                    c, mentoria.getMentorId(), data, duracaoMinutos, mentoriaId)) {
                 LocalDateTime inicio = LocalDateTime.of(data, LocalTime.parse(hora));
                 LocalDateTime fim = inicio.plusMinutes(duracaoMinutos);
                 if (inicio.equals(mentoria.getInicio()) && fim.equals(mentoria.getFim())) continue;
@@ -90,7 +90,7 @@ public class AlteracaoMentoriaDao {
                 LocalDateTime novoFim = novoInicio.plusMinutes(duracaoMinutos);
                 if (novoInicio.equals(inicioAntigo) && novoFim.equals(fimAntigo)) return false;
                 List<String> horarios = new SolicitacaoMentoriaDao(contexto).horariosCadastrados(
-                        c, mentorId, novoInicio.toLocalDate(), duracaoMinutos);
+                        c, mentorId, novoInicio.toLocalDate(), duracaoMinutos, mentoriaId);
                 if (!horarios.contains(novoInicio.toLocalTime().toString())
                         || !mentorAtivo(c, mentorId, disciplinaId)
                         || horarioOcupado(c, mentorId, mentoriaId, novoInicio, novoFim)
@@ -138,42 +138,11 @@ public class AlteracaoMentoriaDao {
 
     private boolean horarioOcupado(Connection c, int mentorId, int mentoriaId,
                                    LocalDateTime inicio, LocalDateTime fim) throws SQLException {
-        String sql = "SELECT 1 FROM mentoria WHERE mentor_id=? AND id<>? " +
-                "AND status IN ('PENDENTE','CONFIRMADA') " +
-                "AND data_hora_inicio < ? AND data_hora_fim > ? FETCH FIRST 1 ROW ONLY";
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, mentorId);
-            ps.setInt(2, mentoriaId);
-            ps.setTimestamp(3, Timestamp.valueOf(fim));
-            ps.setTimestamp(4, Timestamp.valueOf(inicio));
-            try (ResultSet rs = ps.executeQuery()) { return rs.next(); }
-        }
+        return ConflitoHorario.ocupado(c, mentorId, mentoriaId, inicio, fim);
     }
 
     private boolean horarioBloqueado(Connection c, int mentorId, LocalDateTime inicio,
                                      LocalDateTime fim) throws SQLException {
-        String sql = "SELECT hora_inicio, hora_fim FROM bloqueio_horario " +
-                "WHERE mentor_id=? AND data=?";
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, mentorId);
-            ps.setDate(2, java.sql.Date.valueOf(inicio.toLocalDate()));
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String de = rs.getString("hora_inicio");
-                    String ate = rs.getString("hora_fim");
-                    if (de == null || ate == null) return true;
-                    try {
-                        LocalDateTime bloqueioInicio = LocalDateTime.of(inicio.toLocalDate(),
-                                java.time.LocalTime.parse(de));
-                        LocalDateTime bloqueioFim = LocalDateTime.of(inicio.toLocalDate(),
-                                java.time.LocalTime.parse(ate));
-                        if (bloqueioInicio.isBefore(fim) && bloqueioFim.isAfter(inicio)) return true;
-                    } catch (RuntimeException e) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return ConflitoHorario.bloqueado(c, mentorId, inicio, fim);
     }
 }

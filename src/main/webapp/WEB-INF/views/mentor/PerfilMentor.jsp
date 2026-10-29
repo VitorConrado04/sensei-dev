@@ -71,13 +71,46 @@
                 <textarea name="descricao" class="campo-texto so-edicao" maxlength="1000" rows="5" aria-label="Descrição do perfil"><c:out value="${mentor.descricao}"/></textarea>
             </section>
 
+            <h2 class="titulo-secao">Experiência</h2>
+            <section class="cartao" aria-label="Experiência">
+                <p class="perfil-descricao so-leitura">
+                    <c:choose>
+                        <c:when test="${not empty mentor.experiencia}"><c:out value="${mentor.experiencia}"/></c:when>
+                        <c:otherwise>Você ainda não informou a sua experiência. Clique em "Editar Perfil" para adicionar.</c:otherwise>
+                    </c:choose>
+                </p>
+                <textarea name="experiencia" class="campo-texto so-edicao" maxlength="1000" rows="5" aria-label="Experiência do mentor" placeholder="Conte sobre projetos, estágios, monitorias ou outras experiências que ajudam nas mentorias."><c:out value="${mentor.experiencia}"/></textarea>
+            </section>
+
             <h2 class="titulo-secao">Disciplinas</h2>
+            <c:if test="${param.erro == 'disciplinas'}"><p class="subtitulo" role="alert">Não foi possível salvar as disciplinas. Tente novamente.</p></c:if>
             <section class="cartao" aria-label="Disciplinas que domina">
-                <ul class="lista-disciplinas">
-                    <c:forEach var="d" items="${disciplinas}">
-                        <li><c:out value="${d}"/></li>
+                <%-- modo leitura: só as que o mentor já escolheu --%>
+                <div class="so-leitura">
+                    <c:choose>
+                        <c:when test="${empty disciplinas}">
+                            <p class="perfil-descricao">Você ainda não escolheu as disciplinas que domina. Clique em "Editar Perfil" para escolher.</p>
+                        </c:when>
+                        <c:otherwise>
+                            <ul class="lista-disciplinas">
+                                <c:forEach var="d" items="${disciplinas}">
+                                    <li><c:out value="${d}"/></li>
+                                </c:forEach>
+                            </ul>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+
+                <%-- modo edição: uma caixinha por disciplina do curso. Os marcados chegam no
+                     servlet como "disciplina", com o id da disciplina como valor --%>
+                <div class="opcoes-disciplinas so-edicao">
+                    <c:forEach var="d" items="${todasDisciplinas}">
+                        <label class="opcao-disciplina">
+                            <input type="checkbox" name="disciplina" value="${d.id}" ${marcadas[d.id] ? 'checked' : ''}>
+                            <span><c:out value="${d.nome}"/><small>${d.semestre}º semestre</small></span>
+                        </label>
                     </c:forEach>
-                </ul>
+                </div>
             </section>
         </div>
 

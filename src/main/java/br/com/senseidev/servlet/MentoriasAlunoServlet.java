@@ -2,6 +2,7 @@ package br.com.senseidev.servlet;
 
 import br.com.senseidev.auth.TokenMentoria;
 import br.com.senseidev.dao.AlteracaoMentoriaDao;
+import br.com.senseidev.dao.MaterialAlunoDao;
 import br.com.senseidev.dao.MentoriasAlunoDao;
 import br.com.senseidev.dao.UsuarioDao;
 import br.com.senseidev.model.GrupoMentorias;
@@ -68,6 +69,8 @@ public class MentoriasAlunoServlet extends HttpServlet {
             req.setAttribute("tokenMentoria", TokenMentoria.obter(sessao));
             req.setAttribute("dataMinima", LocalDate.now().toString());
             prepararReagendamento(req, mentorandoId);
+            // materiais que os mentores vincularam às mentorias deste aluno (mapa: id da mentoria -> lista)
+            req.setAttribute("materiaisPorMentoria", new MaterialAlunoDao(getServletContext()).listarPorMentorando(mentorandoId));
             req.setAttribute("grupos", Arrays.asList(
                     new GrupoMentorias("futuras", "Próximas mentorias",
                             "Você ainda não tem mentorias futuras.", futuras),

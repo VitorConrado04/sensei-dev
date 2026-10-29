@@ -37,4 +37,21 @@
 .reagendar-data label, .reagendar-enviar label { font-size: .85rem; }
 .reagendar-data input, .reagendar-data select, .reagendar-enviar select { box-sizing: border-box; min-width: 0; width: 100%; padding: .55rem .7rem; border: 1px solid var(--roxo-claro); border-radius: 10px; background: var(--card-alto); color: var(--texto); font: inherit; }
 .reagendar-data button, .reagendar-enviar button { justify-self: start; }
+/* Formulário de avaliação da sessão */
+.avaliacao-form { display: grid; gap: 1.4rem; max-width: 40rem; margin-top: 1.5rem; }
+.avaliacao-form .criterio { border: 0; padding: 0; margin: 0; }
+.avaliacao-form legend { font-family: var(--fonte-titulo); font-size: 0.95rem; margin-bottom: 0.6rem; }
+.avaliacao-form .notas { display: flex; gap: 0.6rem; }
+.avaliacao-form .notas label { position: relative; }
+.avaliacao-form .notas input { position: absolute; opacity: 0; }
+.avaliacao-form .notas span { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 10px; background: var(--card); cursor: pointer; }
+.avaliacao-form .notas input:checked + span { background: var(--roxo); }
+.avaliacao-form .notas input:focus-visible + span { outline: 2px solid var(--roxo-claro); }
 @media (max-width: 600px) { .reagendar-data, .reagendar-enviar { grid-template-columns: minmax(0, 1fr); } }
+
+/* Materiais que o mentor vinculou à mentoria */
+.mentoria-materiais { margin-top: .9rem; padding: .8rem 1rem; border-radius: 14px; background: rgba(106, 79, 165, .18); }
+.mentoria-materiais h4 { margin: 0 0 .4rem; font-family: var(--fonte-titulo); font-weight: 400; font-size: .85rem; }
+.mentoria-materiais ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.mentoria-materiais a { color: var(--roxo-claro); overflow-wrap: anywhere; }
+.mentoria-materiais small { display: block; margin-top: .1rem; color: var(--suave); }

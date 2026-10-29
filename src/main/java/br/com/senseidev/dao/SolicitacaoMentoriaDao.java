@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +31,17 @@ public class SolicitacaoMentoriaDao {
     }
 
     List<String> horariosCadastrados(Connection c, int mentorId, LocalDate data,
-                                             int duracaoMinutos) throws SQLException {
+                                     int duracaoMinutos) throws SQLException {
+        return horariosCadastrados(c, mentorId, data, duracaoMinutos, 0);
+    }
+
+    /**
+     * Horários de início possíveis numa data: estão na disponibilidade semanal, não foram bloqueados
+     * pelo mentor e não colidem com outra sessão. ignorarMentoriaId (0 = nenhuma) é usado no
+     * reagendamento, para a sessão que está sendo trocada não contar como conflito.
+     */
+    List<String> horariosCadastrados(Connection c, int mentorId, LocalDate data,
+                                     int duracaoMinutos, int ignorarMentoriaId) throws SQLException {
         List<String> opcoes = new ArrayList<>();
         if (data == null || data.isBefore(LocalDate.now())
                 || (duracaoMinutos != 60 && duracaoMinutos != 120)
@@ -56,9 +67,13 @@ public class SolicitacaoMentoriaDao {
         }
         for (int hora = 7; hora <= 18; hora++) {
             LocalTime inicio = LocalTime.of(hora, 0);
-            if (LocalDateTime.of(data, inicio).isAfter(LocalDateTime.now())
+            LocalDateTime comeco = LocalDateTime.of(data, inicio);
+            LocalDateTime termino = comeco.plusMinutes(duracaoMinutos);
+            if (comeco.isAfter(LocalDateTime.now())
                     && inicios.contains(inicio)
-                    && (duracaoMinutos == 60 || inicios.contains(inicio.plusHours(1)))) {
+                    && (duracaoMinutos == 60 || inicios.contains(inicio.plusHours(1)))
+                    && !ConflitoHorario.bloqueado(c, mentorId, comeco, termino)
+                    && !ConflitoHorario.ocupado(c, mentorId, ignorarMentoriaId, comeco, termino)) {
                 opcoes.add(inicio.toString());
             }
         }
@@ -81,7 +96,8 @@ public class SolicitacaoMentoriaDao {
                     "WHERE u.id = ? AND u.tipo = 'MENTOR' AND u.status = 'ATIVO') " +
                     "AND EXISTS (SELECT 1 FROM usuario u JOIN mentorando_perfil p ON p.id = u.id " +
                     "WHERE u.id = ? AND u.tipo = 'MENTORANDO' AND u.status = 'ATIVO')";
-            try (PreparedStatement ps = c.prepareStatement(sql)) {
+
+            try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, mentorId);
                 ps.setInt(2, mentorandoId);
                 ps.setInt(3, disciplinaId);
@@ -91,7 +107,18 @@ public class SolicitacaoMentoriaDao {
                 ps.setInt(7, disciplinaId);
                 ps.setInt(8, mentorId);
                 ps.setInt(9, mentorandoId);
-                return ps.executeUpdate() == 1;
+
+                int alterados = ps.executeUpdate();
+                if (alterados > 0) {
+                    try (ResultSet chaves = ps.getGeneratedKeys()) {
+                        if (chaves.next()) {
+                            NotificacaoDao.avisar(c, chaves.getInt(1), "MENTOR", "NOVA_SOLICITACAO",
+                                    "{nome} pediu uma nova mentoria para {quando}.");
+                        }
+                    }
+                    return true;
+                }
+                return false;
             }
         }
     }

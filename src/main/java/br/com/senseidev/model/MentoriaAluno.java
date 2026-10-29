@@ -18,6 +18,7 @@ public class MentoriaAluno {
     private final LocalDateTime inicio;
     private final LocalDateTime fim;
     private final String status;
+    private double nota;
 
     public MentoriaAluno(int id, int mentorId, String mentorNome, boolean mentorAtivo,
                          String disciplina, String objetivo, LocalDateTime inicio,
@@ -48,5 +49,13 @@ public class MentoriaAluno {
     }
     public String getDataTexto() { return inicio.format(DATA); }
     public String getHoraTexto() { return inicio.format(HORA); }
-    public long getDuracaoMinutos() { return Duration.between(inicio, fim).toMinutes(); }
+    public long getDuracaoMinutos() { return Duration.between(inicio, fim).toMinutes();}
+
+    public double getNota() {
+        return nota;
+    }
+
+    public void setNota(double nota) {
+        this.nota = nota;
+    }
 }
