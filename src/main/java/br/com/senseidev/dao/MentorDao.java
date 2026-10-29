@@ -416,19 +416,27 @@ public class MentorDao {
         LocalDateTime de = diaInteiro ? data.atStartOfDay() : LocalDateTime.of(data, LocalTime.parse(horaInicio));
         LocalDateTime ate = diaInteiro ? data.plusDays(1).atStartOfDay() : LocalDateTime.of(data, LocalTime.parse(horaFim));
         try (Connection c = Conexao.abrir(contexto)) {
-            if (ConflitoHorario.ocupado(c, mentorId, 0, de, ate)) return false;
-            String sql = "INSERT INTO bloqueio_horario (mentor_id, data, hora_inicio, hora_fim, motivo) VALUES (?,?,?,?,?)";
-            try (PreparedStatement ps = c.prepareStatement(sql)) {
-                ps.setInt(1, mentorId);
-                ps.setDate(2, java.sql.Date.valueOf(data));
-                if (diaInteiro) { ps.setNull(3, java.sql.Types.VARCHAR); ps.setNull(4, java.sql.Types.VARCHAR); }
-                else { ps.setString(3, horaInicio); ps.setString(4, horaFim); }
-                if (motivo == null || motivo.isEmpty()) ps.setNull(5, java.sql.Types.VARCHAR);
-                else ps.setString(5, motivo);
-                ps.executeUpdate();
+            c.setAutoCommit(false);
+            try {
+                if (!ConflitoHorario.travarMentor(c, mentorId)) return false;
+                if (ConflitoHorario.ocupado(c, mentorId, 0, de, ate)) return false;
+                String sql = "INSERT INTO bloqueio_horario (mentor_id, data, hora_inicio, hora_fim, motivo) VALUES (?,?,?,?,?)";
+                try (PreparedStatement ps = c.prepareStatement(sql)) {
+                    ps.setInt(1, mentorId);
+                    ps.setDate(2, java.sql.Date.valueOf(data));
+                    if (diaInteiro) { ps.setNull(3, java.sql.Types.VARCHAR); ps.setNull(4, java.sql.Types.VARCHAR); }
+                    else { ps.setString(3, horaInicio); ps.setString(4, horaFim); }
+                    if (motivo == null || motivo.isEmpty()) ps.setNull(5, java.sql.Types.VARCHAR);
+                    else ps.setString(5, motivo);
+                    ps.executeUpdate();
+                }
+                c.commit();
+                return true;
+            } catch (SQLException | RuntimeException e) {
+                rollback(c, e);
+                throw e;
             }
         }
-        return true;
     }
 
     public void removerBloqueio(int mentorId, int bloqueioId) throws SQLException {

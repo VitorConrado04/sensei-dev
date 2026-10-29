@@ -12,6 +12,17 @@ import java.time.LocalTime;
 final class ConflitoHorario {
     private ConflitoHorario() { }
 
+    /** Serializa alterações na agenda do mesmo mentor dentro da transação. */
+    static boolean travarMentor(Connection c, int mentorId) throws SQLException {
+        try (PreparedStatement ps = c.prepareStatement(
+                "SELECT id FROM mentor_perfil WHERE id=? FOR UPDATE")) {
+            ps.setInt(1, mentorId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
     /** Existe outra sessão PENDENTE/CONFIRMADA do mentor que se sobrepõe a [inicio, fim)? */
     static boolean ocupado(Connection c, int mentorId, int ignorarMentoriaId,
                            LocalDateTime inicio, LocalDateTime fim) throws SQLException {

@@ -89,6 +89,7 @@ public class AlteracaoMentoriaDao {
                 }
                 LocalDateTime novoFim = novoInicio.plusMinutes(duracaoMinutos);
                 if (novoInicio.equals(inicioAntigo) && novoFim.equals(fimAntigo)) return false;
+                if (!ConflitoHorario.travarMentor(c, mentorId)) return false;
                 List<String> horarios = new SolicitacaoMentoriaDao(contexto).horariosCadastrados(
                         c, mentorId, novoInicio.toLocalDate(), duracaoMinutos, mentoriaId);
                 if (!horarios.contains(novoInicio.toLocalTime().toString())

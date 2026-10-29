@@ -86,39 +86,47 @@ public class SolicitacaoMentoriaDao {
             throws SQLException {
         LocalDateTime fim = inicio.plusMinutes(duracaoMinutos);
         try (Connection c = Conexao.abrir(contexto)) {
-            if (!horariosCadastrados(c, mentorId, inicio.toLocalDate(), duracaoMinutos)
-                    .contains(inicio.toLocalTime().toString())) return false;
-            String sql = "INSERT INTO mentoria (mentor_id, mentorando_id, disciplina_id, objetivo, " +
-                    "data_hora_inicio, data_hora_fim, status) " +
-                    "SELECT ?, ?, ?, ?, ?, ?, 'PENDENTE' WHERE " +
-                    "EXISTS (SELECT 1 FROM usuario u JOIN mentor_perfil p ON p.id = u.id " +
-                    "JOIN mentor_disciplina md ON md.mentor_id = u.id AND md.disciplina_id = ? " +
-                    "WHERE u.id = ? AND u.tipo = 'MENTOR' AND u.status = 'ATIVO') " +
-                    "AND EXISTS (SELECT 1 FROM usuario u JOIN mentorando_perfil p ON p.id = u.id " +
-                    "WHERE u.id = ? AND u.tipo = 'MENTORANDO' AND u.status = 'ATIVO')";
+            c.setAutoCommit(false);
+            try {
+                if (!ConflitoHorario.travarMentor(c, mentorId)) return false;
+                if (!horariosCadastrados(c, mentorId, inicio.toLocalDate(), duracaoMinutos)
+                        .contains(inicio.toLocalTime().toString())) return false;
+                String sql = "INSERT INTO mentoria (mentor_id, mentorando_id, disciplina_id, objetivo, " +
+                        "data_hora_inicio, data_hora_fim, status) " +
+                        "SELECT ?, ?, ?, ?, ?, ?, 'PENDENTE' WHERE " +
+                        "EXISTS (SELECT 1 FROM usuario u JOIN mentor_perfil p ON p.id = u.id " +
+                        "JOIN mentor_disciplina md ON md.mentor_id = u.id AND md.disciplina_id = ? " +
+                        "WHERE u.id = ? AND u.tipo = 'MENTOR' AND u.status = 'ATIVO') " +
+                        "AND EXISTS (SELECT 1 FROM usuario u JOIN mentorando_perfil p ON p.id = u.id " +
+                        "WHERE u.id = ? AND u.tipo = 'MENTORANDO' AND u.status = 'ATIVO')";
 
-            try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                ps.setInt(1, mentorId);
-                ps.setInt(2, mentorandoId);
-                ps.setInt(3, disciplinaId);
-                ps.setString(4, objetivo);
-                ps.setTimestamp(5, Timestamp.valueOf(inicio));
-                ps.setTimestamp(6, Timestamp.valueOf(fim));
-                ps.setInt(7, disciplinaId);
-                ps.setInt(8, mentorId);
-                ps.setInt(9, mentorandoId);
+                try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setInt(1, mentorId);
+                    ps.setInt(2, mentorandoId);
+                    ps.setInt(3, disciplinaId);
+                    ps.setString(4, objetivo);
+                    ps.setTimestamp(5, Timestamp.valueOf(inicio));
+                    ps.setTimestamp(6, Timestamp.valueOf(fim));
+                    ps.setInt(7, disciplinaId);
+                    ps.setInt(8, mentorId);
+                    ps.setInt(9, mentorandoId);
 
-                int alterados = ps.executeUpdate();
-                if (alterados > 0) {
-                    try (ResultSet chaves = ps.getGeneratedKeys()) {
-                        if (chaves.next()) {
-                            NotificacaoDao.avisar(c, chaves.getInt(1), "MENTOR", "NOVA_SOLICITACAO",
-                                    "{nome} pediu uma nova mentoria para {quando}.");
+                    int alterados = ps.executeUpdate();
+                    if (alterados > 0) {
+                        try (ResultSet chaves = ps.getGeneratedKeys()) {
+                            if (chaves.next()) {
+                                NotificacaoDao.avisar(c, chaves.getInt(1), "MENTOR", "NOVA_SOLICITACAO",
+                                        "{nome} pediu uma nova mentoria para {quando}.");
+                            }
                         }
+                        c.commit();
+                        return true;
                     }
-                    return true;
+                    return false;
                 }
-                return false;
+            } catch (SQLException | RuntimeException e) {
+                try { c.rollback(); } catch (SQLException erro) { e.addSuppressed(erro); }
+                throw e;
             }
         }
     }
