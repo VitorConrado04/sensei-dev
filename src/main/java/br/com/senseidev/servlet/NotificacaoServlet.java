@@ -37,7 +37,7 @@ public class NotificacaoServlet extends HttpServlet {
         } catch (SQLException e) {
             throw new ServletException("Não foi possível carregar as notificações.", e);
         }
-        req.getRequestDispatcher("/WEB-INF/views/notificacoes/Notificacoes.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/Notificacoes.jsp").forward(req, resp);
     }
 
     @Override

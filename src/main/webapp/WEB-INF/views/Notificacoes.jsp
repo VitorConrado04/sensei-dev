@@ -1,23 +1,83 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-<header class="topo topo-mentorando">
-    <div class="topo-perfil">
-        <c:choose>
-            <c:when test="${not empty usuario.fotoUrl}"><img class="avatar" style="--tam:64px" src="${ctx}<c:out value='${usuario.fotoUrl}'/>" alt="Sua foto de perfil"></c:when>
-            <c:otherwise><svg class="avatar avatar-padrao" style="--tam:64px" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="none" stroke="#fff" stroke-width="4"/><circle cx="32" cy="25" r="9" fill="#fff"/><path d="M13.5 50C15 40 23 35 32 35s17 5 18.5 15a29 29 0 0 1-37 0z" fill="#fff"/></svg></c:otherwise>
-        </c:choose>
-        <div class="topo-info"><span class="topo-curso"><c:out value="${usuario.semestreAtual}"/>º semestre ADS</span><strong class="topo-nome"><c:out value="${usuario.nome}"/></strong></div>
-    </div>
-    <nav class="abas" aria-label="Navegação do mentorando">
-        <a class="aba" href="${ctx}/inicio-aluno">Início</a>
-        <a class="aba" href="${ctx}/mentorias-aluno" <c:if test="${param.aba == 'mentorias'}">aria-current="page"</c:if>>Mentorias</a>
-        <a class="aba" href="${ctx}/perfil-aluno">Perfil</a>
-        <jsp:include page="/WEB-INF/fragmentos/link-notificacoes.jsp">
-            <jsp:param name="atual" value="${param.aba == 'notificacoes' ? 'sim' : 'nao'}"/>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Notificações | SENSEI.DEV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;500;600&family=Bruno+Ace&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="${ctx}/css/mentor.css">
+</head>
+<body>
+<c:choose>
+    <c:when test="${tipoUsuario == 'MENTOR'}">
+        <jsp:include page="/WEB-INF/fragmentos/cabecalho-mentor.jsp">
+            <jsp:param name="aba" value="notificacoes"/>
         </jsp:include>
-        <a class="aba" href="${ctx}/conta">Minha conta</a>
-        <a class="aba" href="${ctx}/logout">Sair</a>
-    </nav>
-    <a class="logo" href="${ctx}/inicio-aluno">SENSEI.DEV</a>
-</header>
+    </c:when>
+    <c:otherwise>
+        <jsp:include page="/WEB-INF/fragmentos/cabecalho-aluno.jsp">
+            <jsp:param name="aba" value="notificacoes"/>
+        </jsp:include>
+    </c:otherwise>
+</c:choose>
+
+<main class="conteudo">
+    <div class="notificacoes-topo">
+        <h1 class="titulo-secao">Notificações</h1>
+        <c:if test="${notificacoesNaoLidas > 0}">
+            <form action="${ctx}/notificacoes" method="post">
+                <input type="hidden" name="acao" value="todas">
+                <button class="notificacao-botao" type="submit">Marcar todas como lidas</button>
+            </form>
+        </c:if>
+    </div>
+
+    <c:choose>
+        <c:when test="${empty notificacoes}">
+            <p class="vazio">Nenhuma notificação por enquanto.</p>
+        </c:when>
+        <c:otherwise>
+            <ul class="lista-notificacoes">
+                <c:forEach var="n" items="${notificacoes}">
+                    <li class="notificacao${n.lida ? '' : ' nao-lida'}">
+                        <div>
+                            <p><c:out value="${n.mensagem}"/></p>
+                            <small><c:out value="${n.criadoEmTexto}"/></small>
+                            <c:if test="${n.mentoriaId != null}">
+                                <c:choose>
+                                    <c:when test="${tipoUsuario == 'MENTOR'}">
+                                        <a class="notificacao-link" href="${ctx}/mentor-inicio">Ver agenda</a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a class="notificacao-link" href="${ctx}/mentorias-aluno#mentoria-${n.mentoriaId}">Ver mentoria</a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
+                        </div>
+                        <div class="notificacao-acoes">
+                            <c:if test="${not n.lida}">
+                                <form action="${ctx}/notificacoes" method="post">
+                                    <input type="hidden" name="acao" value="lida">
+                                    <input type="hidden" name="id" value="${n.id}">
+                                    <button class="notificacao-botao" type="submit">Marcar como lida</button>
+                                </form>
+                            </c:if>
+                            <form action="${ctx}/notificacoes" method="post">
+                                <input type="hidden" name="acao" value="excluir">
+                                <input type="hidden" name="id" value="${n.id}">
+                                <button class="notificacao-botao" type="submit">Excluir</button>
+                            </form>
+                        </div>
+                    </li>
+                </c:forEach>
+            </ul>
+        </c:otherwise>
+    </c:choose>
+</main>
+</body>
+</html>
