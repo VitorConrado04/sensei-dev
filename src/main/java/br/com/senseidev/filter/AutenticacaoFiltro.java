@@ -16,7 +16,7 @@ import java.sql.SQLException;
 /** Protege rotas privadas e impede que um mentorando navegue na área do mentor. */
 @WebFilter(urlPatterns = {
         "/mentor-inicio", "/mentor-agenda", "/mentor-perfil", "/mentor-material", "/mentor-avaliacao", "/inicio-aluno",
-        "/admin/*", "/conta", "/perfil-aluno", "/interesses-aluno", "/mentor-publico", "/favoritos-aluno",
+        "/admin/*", "/console", "/console/*", "/conta", "/perfil-aluno", "/interesses-aluno", "/mentor-publico", "/favoritos-aluno",
         "/solicitar-mentoria", "/mentorias-aluno", "/avaliar-sessao", "/notificacoes"
 })
 public class AutenticacaoFiltro implements Filter {
@@ -64,7 +64,7 @@ public class AutenticacaoFiltro implements Filter {
         }
 
         String tipoEsperado;
-        if (rota.startsWith("/admin")) tipoEsperado = "ADMIN";
+        if (rota.startsWith("/admin") || rota.equals("/console")) tipoEsperado = "ADMIN";
         else if (rota.equals("/inicio-aluno") || rota.equals("/perfil-aluno")
                 || rota.equals("/interesses-aluno") || rota.equals("/mentor-publico")
                 || rota.equals("/favoritos-aluno") || rota.equals("/solicitar-mentoria")
@@ -80,6 +80,12 @@ public class AutenticacaoFiltro implements Filter {
             return;
         }
 
+        // Cabecalhos das paginas administrativas.
+        if (rota.startsWith("/admin/")) {
+            req.setCharacterEncoding("UTF-8");
+            resp.setHeader("X-Content-Type-Options", "nosniff");
+            resp.setHeader("X-Frame-Options", "DENY");
+        }
         // Rotas de mentor exigem tambem o mentorId na sessao
         if ("MENTOR".equals(tipoEsperado)) {
             Object mentorId = sessao.getAttribute("mentorId");

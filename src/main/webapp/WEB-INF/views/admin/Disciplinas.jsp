@@ -6,20 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Disciplinas | SENSEI.DEV</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 24px; }
-        table { border-collapse: collapse; width: 100%; margin-top: 24px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background: #eee; }
-        form.linha { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
-        form.linha label { display: block; font-weight: bold; }
-        form.linha input, form.linha select { padding: 8px; }
-        form.acao { display: inline; margin-left: 6px; }
-        .erro { color: #b00020; }
-        .ok { color: #1b5e20; }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
 </head>
 <body>
+<jsp:include page="/WEB-INF/fragmentos/cabecalho-admin.jsp"><jsp:param name="aba" value="disciplinas"/></jsp:include><main class="conteudo admin-conteudo">
 <h1>Disciplinas</h1>
 <p><a href="${pageContext.request.contextPath}/admin/inicio">Voltar ao painel</a></p>
 
@@ -67,7 +57,7 @@
     </div>
 </form>
 
-<table>
+<div class="admin-tabela" role="region" aria-label="Lista de registros" tabindex="0"><table>
     <tr>
         <th>ID</th>
         <th>Nome</th>
@@ -90,6 +80,7 @@
             </td>
         </tr>
     </c:forEach>
-</table>
+</table></div>
+</main>
 </body>
 </html>

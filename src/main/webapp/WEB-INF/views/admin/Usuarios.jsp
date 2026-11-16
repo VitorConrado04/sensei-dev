@@ -6,17 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Usuários | SENSEI.DEV</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 24px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background: #eee; }
-        form.acao { display: inline; margin-left: 6px; }
-        .erro { color: #b00020; }
-        .ok { color: #1b5e20; }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
 </head>
 <body>
+<jsp:include page="/WEB-INF/fragmentos/cabecalho-admin.jsp"><jsp:param name="aba" value="usuarios"/></jsp:include><main class="conteudo admin-conteudo">
 <h1>Usuários</h1>
 <p><a href="${pageContext.request.contextPath}/admin/inicio">Voltar ao painel</a></p>
 
@@ -30,7 +23,7 @@
     <c:when test="${param.ok == 'excluido'}"><p class="ok">Usuário excluído.</p></c:when>
 </c:choose>
 
-<table>
+<div class="admin-tabela" role="region" aria-label="Lista de registros" tabindex="0"><table>
     <tr>
         <th>ID</th>
         <th>Nome</th>
@@ -75,6 +68,7 @@
             </td>
         </tr>
     </c:forEach>
-</table>
+</table></div>
+</main>
 </body>
 </html>

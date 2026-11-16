@@ -6,15 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Editar usuário | SENSEI.DEV</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 24px; max-width: 480px; }
-        label { display: block; margin-top: 12px; font-weight: bold; }
-        input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
-        .erro { color: #b00020; }
-        button { margin-top: 16px; padding: 8px 16px; }
-    </style>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
 </head>
 <body>
+<jsp:include page="/WEB-INF/fragmentos/cabecalho-admin.jsp"><jsp:param name="aba" value="usuarios"/></jsp:include><main class="conteudo admin-conteudo">
 <h1>Editar usuário</h1>
 <p><a href="${pageContext.request.contextPath}/admin/usuarios">Voltar à lista</a></p>
 
@@ -27,7 +22,7 @@
     </p>
 </c:if>
 
-<form action="${pageContext.request.contextPath}/admin/usuario-editar" method="post">
+<form class="admin-form" action="${pageContext.request.contextPath}/admin/usuario-editar" method="post">
     <%-- id escondido: diz ao servlet qual usuario esta sendo editado --%>
     <input type="hidden" name="id" value="${usuario.id}">
 
@@ -57,5 +52,6 @@
 
     <button type="submit">Salvar</button>
 </form>
+</main>
 </body>
 </html>
