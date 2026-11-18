@@ -15,7 +15,7 @@
 
 <%-- mensagens devolvidas pelo servlet --%>
 <c:choose>
-    <c:when test="${param.erro == 'dados'}"><p class="erro">Confira os campos: informe o nome (até 150 caracteres) e um semestre de 1 a 8.</p></c:when>
+    <c:when test="${param.erro == 'dados'}"><p class="erro">Confira os campos: informe o nome (até 150 caracteres) e um semestre de 1 a 5.</p></c:when>
     <c:when test="${param.erro == 'nome'}"><p class="erro">Já existe uma disciplina com esse nome.</p></c:when>
     <c:when test="${param.erro == 'vinculos'}"><p class="erro">Esta disciplina está em uso (mentores, interesses de alunos ou mentorias) e não pode ser excluída.</p></c:when>
     <c:when test="${param.ok == 'criada'}"><p class="ok">Disciplina criada.</p></c:when>
@@ -43,7 +43,7 @@
     <div>
         <label for="semestre">Semestre</label>
         <select id="semestre" name="semestre" required>
-            <c:forEach var="s" begin="1" end="8">
+            <c:forEach var="s" begin="1" end="5">
                 <option value="${s}" ${disciplinaEdicao.semestre == s ? 'selected' : ''}>${s}º semestre</option>
             </c:forEach>
         </select>

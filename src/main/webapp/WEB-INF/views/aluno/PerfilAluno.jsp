@@ -33,6 +33,7 @@
     <c:if test="${not empty param.erro}"><p class="aviso erro" role="alert"><c:choose><c:when test="${param.erro == 'semestre'}">Escolha um semestre entre 1 e 8.</c:when><c:when test="${param.erro == 'foto'}">Escolha uma foto PNG ou JPG válida, com até 2 MB.</c:when><c:when test="${param.erro == 'disciplinas'}">Não foi possível salvar as disciplinas. Revise a seleção.</c:when><c:otherwise>Não foi possível salvar o perfil.</c:otherwise></c:choose></p></c:if>
     <div class="perfil-aluno-grid">
         <div>
+            <div class="interesse-topo"><h2 class="titulo-secao secao-aluno interesse-titulo">Meus dados</h2></div>
             <section class="cartao resumo-aluno" aria-label="Resumo do mentorando">
                 <c:choose>
                     <c:when test="${not empty usuario.fotoUrl}"><img class="avatar" style="--tam:88px" src="${ctx}<c:out value='${usuario.fotoUrl}'/>" alt="Sua foto de perfil"></c:when>
@@ -40,7 +41,6 @@
                 </c:choose>
                 <div><span class="resumo-curso">${usuario.semestreAtual}º semestre de Análise e Desenvolvimento de Sistemas</span><strong><c:out value="${usuario.nome}"/></strong></div>
             </section>
-            <h2 class="titulo-secao secao-aluno">Descrição</h2><section class="cartao descricao-aluno" aria-label="Descrição"></section>
         </div>
         <div>
             <div class="interesse-topo"><h2 class="titulo-secao secao-aluno interesse-titulo">Disciplinas de interesse</h2><button type="button" id="editar-interesses" class="btn-pilula">Editar</button></div>

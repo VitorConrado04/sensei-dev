@@ -82,12 +82,42 @@ input:focus-visible {
 .erro {
     display: none;
     width: 100%;
-    margin: -1rem 0 1rem 0.7rem;
-    font-size: 0.9rem;
+    margin: 1.6rem 0 0;
+     text-align: center;
+    font-size: 0.95rem;
     color: #ff8a80;
 }
 .erro.visivel { display: block; }
 .mensagem { width:100%; max-width:400px; margin: 1.2rem 0 -3.5rem; color:#b7f0c0; text-align:center; line-height:1.4; }
+
+
+/* ---------- Link "Cadastre-se" (botão de contorno roxo) ---------- */
+.link-login {
+    margin-top: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    color: var(--texto-claro);
+    text-align: center;
+}
+.link-login a {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    font-family: var(--fonte-titulo);
+    font-size: 0.8rem;
+    color: #fff;
+    text-decoration: none;
+    border: 2px solid var(--roxo);
+    border-radius: 999px;
+    transition: background 0.2s;
+}
+.link-login a:hover,
+.link-login a:focus-visible {
+    background: var(--roxo);
+    outline: none;
+}
 
 /* ---------- Botão ---------- */
 .btn-entrar {

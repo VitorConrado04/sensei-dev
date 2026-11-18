@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Types;
+import br.com.senseidev.auth.SenhaUtil;
 
 public class UsuarioDao {
 
@@ -78,6 +79,21 @@ public class UsuarioDao {
             ps.setString(1, status);
             ps.setInt(2, id);
             ps.executeUpdate();
+        }
+    }
+
+    // Diz se existe uma conta SUSPENSA com esse e-mail E essa senha.
+    // So confirma a suspensao quando a senha esta certa: assim o login nao revela
+    // para quem esta chutando que o e-mail existe ou que a conta foi suspensa.
+    public boolean contaSuspensa(String email, String senha) throws SQLException {
+        String sql = "SELECT senha FROM usuario "
+                + "WHERE LOWER(email) = LOWER(?) AND UPPER(status) = 'SUSPENSO'";
+        try (Connection c = Conexao.abrir(contexto);
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, email == null ? "" : email.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && SenhaUtil.verificar(senha, rs.getString("senha"));
+            }
         }
     }
 

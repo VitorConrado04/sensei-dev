@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asap:wght@400;500&family=Bruno+Ace&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/login.css?v=2">
 </head>
 <body>
 <main class="tela-login">
@@ -31,16 +31,6 @@
     <c:if test="${param.saiu == '1'}">
         <p class="mensagem" role="status">Você saiu da sua conta.</p>
     </c:if>
-    <c:if test="${not empty param.erro}">
-        <p class="erro visivel" role="alert">
-            <c:choose>
-                <c:when test="${param.erro == 'campos'}">Preencha e-mail e senha.</c:when>
-                <c:when test="${param.erro == 'credenciais'}">E-mail ou senha incorretos.</c:when>
-                <c:when test="${param.erro == 'sessao'}">Entre novamente para acessar essa página.</c:when>
-                <c:otherwise>Não foi possível acessar o banco de dados. Tente novamente.</c:otherwise>
-            </c:choose>
-        </p>
-    </c:if>
 
     <form id="form-login" action="${pageContext.request.contextPath}/login"
           method="post" novalidate>
@@ -55,10 +45,21 @@
             <input type="password" id="senha" name="senha" autocomplete="current-password" required>
         </div>
 
-        <p class="erro" id="erro-login" role="alert">Preencha e-mail e senha.</p>
+                <button type="submit" class="btn-entrar">Entrar</button>
 
-        <button type="submit" class="btn-entrar">Entrar</button>
-    </form>
+                <p class="erro" id="erro-login" role="alert">Preencha e-mail e senha.</p>
+                <c:if test="${not empty param.erro}">
+                    <p class="erro visivel" role="alert">
+                        <c:choose>
+                            <c:when test="${param.erro == 'campos'}">Preencha e-mail e senha.</c:when>
+                            <c:when test="${param.erro == 'credenciais'}">E-mail ou senha incorretos.</c:when>
+                            <c:when test="${param.erro == 'suspensa'}">Sua conta foi suspensa pelo administrador. Entre em contato com a coordenação para saber mais.</c:when>
+                            <c:when test="${param.erro == 'sessao'}">Entre novamente para acessar essa página.</c:when>
+                            <c:otherwise>Não foi possível acessar o banco de dados. Tente novamente.</c:otherwise>
+                        </c:choose>
+                    </p>
+                </c:if>
+            </form>
 
     <footer class="redes">
         <a href="#" aria-label="Instagram">

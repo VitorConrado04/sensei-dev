@@ -52,18 +52,18 @@
         <label class="campo-semestre" for="semestre">Semestre:
             <select id="semestre" name="semestre">
                 <option value="">Todos</option>
-                <c:forEach var="s" begin="1" end="8"><option value="${s}" ${semestre == s ? 'selected' : ''}>${s}º semestre</option></c:forEach>
+                                <c:forEach var="s" begin="1" end="5"><option value="${s}" ${semestre == s ? 'selected' : ''}>${s}º semestre</option></c:forEach>
             </select>
         </label>
-        <fieldset class="materias"><legend class="so-leitor">Disciplinas</legend>
+                <fieldset class="materias" id="lista-materias"><legend class="so-leitor">Disciplinas</legend>
             <c:forEach var="d" items="${disciplinas}">
-                <label class="materia"><input type="checkbox" name="disciplina" value="${d.id}" ${marcadas[d.id] ? 'checked' : ''}><span><c:out value="${d.nome}"/></span></label>
+                                <label class="materia" data-semestre="${d.semestre}"><input type="checkbox" name="disciplina" value="${d.id}" ${marcadas[d.id] ? 'checked' : ''}><span><c:out value="${d.nome}"/></span></label>
             </c:forEach>
         </fieldset>
         <label class="campo-nota" for="nota">Avaliação mínima:
             <select id="nota" name="nota">
-                <option value="">Qualquer nota</option>
-                <c:forEach var="n" begin="1" end="5"><option value="${n}" ${notaMinima == n ? 'selected' : ''}>${n} estrela(s) ou mais</option></c:forEach>
+                <option value="">Todas</option>
+                <c:forEach var="n" begin="1" end="5"><option value="${n}" ${notaMinima == n ? 'selected' : ''}>${n} ${n == 1 ? 'estrela' : 'estrelas'}</option></c:forEach>
             </select>
         </label>
         <div class="acoes-busca"><button type="submit" class="btn-pilula btn-busca">Buscar Mentores</button><a href="${ctx}/inicio-aluno">Limpar filtros</a></div>
@@ -128,5 +128,24 @@
         </c:choose>
     </section>
 </main>
+<script>
+    // Mostra so as disciplinas do semestre escolhido ("Todos" mostra tudo).
+    // Ao esconder uma disciplina, desmarca o checkbox dela: campo escondido
+    // continua sendo enviado no formulario se estiver marcado.
+    (function () {
+        var seletor = document.getElementById('semestre');
+        var materias = document.querySelectorAll('#lista-materias .materia');
+        function filtrar() {
+            var escolhido = seletor.value;
+            materias.forEach(function (m) {
+                var mostrar = escolhido === '' || m.getAttribute('data-semestre') === escolhido;
+                m.style.display = mostrar ? '' : 'none';
+                if (!mostrar) m.querySelector('input').checked = false;
+            });
+        }
+        seletor.addEventListener('change', filtrar);
+        filtrar();
+    })();
+</script>
 </body>
 </html>

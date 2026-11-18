@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Locale;
+import br.com.senseidev.dao.UsuarioDao;
 
 /**
  * Autentica mentores e mentorandos usando as credenciais armazenadas no H2.
@@ -37,6 +38,13 @@ public class LoginServlet extends HttpServlet {
                     .autenticarUsuario(email.trim().toLowerCase(Locale.ROOT), senha);
 
             if (usuario == null) {
+                // O login so aceita contas ATIVAS. Se a conta existe, a senha esta certa
+                // e o status e SUSPENSO, avisa que foi o admin que suspendeu.
+                String emailLimpo = email.trim().toLowerCase(Locale.ROOT);
+                if (new UsuarioDao(getServletContext()).contaSuspensa(emailLimpo, senha)) {
+                    resp.sendRedirect(req.getContextPath() + "/LoginArea.jsp?erro=suspensa");
+                    return;
+                }
                 resp.sendRedirect(req.getContextPath() + "/LoginArea.jsp?erro=credenciais");
                 return;
             }

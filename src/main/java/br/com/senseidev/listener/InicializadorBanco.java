@@ -66,11 +66,42 @@ public class InicializadorBanco implements ServletContextListener {
     };
 
     private static final String[][] DISCIPLINAS_BASE = {
-            {"Algoritmos e Lógica de Programação", "1"}, {"Fundamentos de Sistemas de Informação", "1"},
-            {"Programação Orientada a Objetos", "2"}, {"Estrutura de Dados", "2"},
-            {"Banco de Dados", "2"}, {"Desenvolvimento de Sistemas Web", "3"},
-            {"Engenharia de Software", "3"}, {"Infraestrutura de TI", "3"},
-            {"Redes de Computadores", "4"}, {"Segurança da Informação", "4"}
+            // 1º semestre
+            {"Algoritmos e Programação I", "1"},
+            {"Banco de Dados", "1"},
+            {"Conceitos de Computação", "1"},
+            {"Evolução da Tecnologia e Sociedade", "1"},
+            {"Fundamentos de Administração", "1"},
+            {"Usabilidade, Interface e UX", "1"},
+            {"Projeto Integrador: desenvolvimento de lógica", "1"},
+            // 2º semestre
+            {"Algoritmos e Programação II", "2"},
+            {"Análise e Desenvolvimento de Sistemas", "2"},
+            {"Desenvolvimento Web", "2"},
+            {"Ética, Cidadania e Sustentabilidade", "2"},
+            {"Programação para Banco de Dados", "2"},
+            {"Projeto Integrador: desenvolvimento estruturado de sistemas", "2"},
+            // 3º semestre
+            {"Desenvolvimento de Sistemas Web", "3"},
+            {"Estrutura de Dados", "3"},
+            {"Infraestrutura de TI", "3"},
+            {"Programação Orientada a Objetos", "3"},
+            {"Projeto Integrador: desenvolvimento de sistemas orientado à web", "3"},
+            // 4º semestre
+            {"Análise de Dados e Estatística", "4"},
+            {"Desenvolvimento de Sistemas para Dispositivos Móveis", "4"},
+            {"Engenharia e Arquitetura de Software", "4"},
+            {"Gerenciamento de Projetos", "4"},
+            {"Qualidade de Software", "4"},
+            {"Projeto Integrador: desenvolvimento para dispositivos móveis - ações extensionistas", "4"},
+            // 5º semestre
+            {"Administração de Tecnologias da Informação", "5"},
+            {"Comunicação, Liderança e Negociação em TI", "5"},
+            {"Desenvolvimento em Nuvem e IoT", "5"},
+            {"Empreendedorismo, Inovação e Economia Criativa", "5"},
+            {"Segurança e Auditoria de Sistemas de Informação - ações extensionistas", "5"},
+            {"Projeto Integrador: análise de soluções integradas para organizações - ações extensionistas", "5"},
+            {"Eletivas", "5"}
     };
 
     @Override

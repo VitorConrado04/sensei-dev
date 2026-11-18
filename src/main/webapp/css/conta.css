@@ -1,0 +1,110 @@
+/* SENSEI.DEV · tela "Minha conta" (usa as cores e fontes definidas no mentor.css) */
+
+.conta-pagina {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5rem var(--margem) 3rem;
+}
+
+.conta-logo {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    letter-spacing: 0.04em;
+    color: #fff;
+    text-decoration: none;
+}
+
+.conta-card {
+    width: 100%;
+    max-width: 520px;
+    margin-top: 2.5rem;
+    padding: 2rem;
+    background: var(--card);
+    border: 1px solid #ffffff12;
+    border-radius: 28px;
+}
+
+.conta-card h1 {
+    font-family: var(--fonte-titulo);
+    font-weight: 400;
+    font-size: 1.6rem;
+}
+
+.conta-voltar {
+    display: inline-block;
+    margin: 0.6rem 0 1.4rem;
+    color: var(--roxo-claro);
+    text-underline-offset: 4px;
+}
+
+/* ---------- Avisos ---------- */
+.conta-aviso {
+    margin-bottom: 1.4rem;
+    padding: 0.9rem 1rem;
+    border-radius: 14px;
+    line-height: 1.4;
+}
+.conta-aviso.ok { background: #4cd96415; color: #9cebaa; }
+.conta-aviso.erro { background: #ff5a5215; color: #ffaaa5; }
+
+/* ---------- Campos ---------- */
+.conta-campo { margin-bottom: 1.2rem; }
+
+.conta-card label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-family: var(--fonte-titulo);
+    font-size: 0.8rem;
+}
+
+.conta-card input,
+.conta-card select {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.7rem 1rem;
+    background: #211e25;
+    color: var(--texto);
+    border: 1px solid #ffffff25;
+    border-radius: 12px;
+    font: inherit;
+}
+.conta-card input:focus-visible,
+.conta-card select:focus-visible {
+    outline: none;
+    border-color: var(--roxo-claro);
+}
+
+/* ---------- Troca de senha ---------- */
+.conta-senha {
+    margin: 1.8rem 0 1.4rem;
+    padding: 1.2rem 1.2rem 0.2rem;
+    border: 1px solid #ffffff18;
+    border-radius: 20px;
+}
+.conta-senha legend {
+    padding: 0 0.6rem;
+    font-family: var(--fonte-titulo);
+    font-size: 0.85rem;
+    color: var(--roxo-claro);
+}
+.conta-senha p {
+    margin-bottom: 1.2rem;
+    color: var(--suave);
+    font-size: 0.9rem;
+}
+
+/* ---------- Botão ---------- */
+.conta-salvar {
+    width: 100%;
+    min-height: 48px;
+    background: var(--roxo);
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    font-family: var(--fonte-titulo);
+    font-size: 0.9rem;
+}
+.conta-salvar:hover,
+.conta-salvar:focus-visible { background: #59418b; }
