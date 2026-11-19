@@ -1,6 +1,8 @@
 package br.com.senseidev.servlet;
 
+import br.com.senseidev.model.Disciplina;
 import br.com.senseidev.auth.SenhaUtil;
+import br.com.senseidev.dao.DisciplinaDao;
 import br.com.senseidev.dao.MentorDao;
 
 import javax.servlet.ServletException;
@@ -19,11 +21,32 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import br.com.senseidev.dao.MentorDisciplinaDao;
 
 @WebServlet("/cadastro-mentor")
 @MultipartConfig(maxFileSize = 2 * 1024 * 1024, maxRequestSize = 3 * 1024 * 1024, fileSizeThreshold = 1024 * 1024)
 public class CadastroMentorServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
+
+    // Abre a tela de cadastro ja com a lista de disciplinas (vem do banco).
+    // A pagina CadastroMentor.jsp nao busca sozinha, por isso passa por aqui.
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            req.setAttribute("disciplinas", new DisciplinaDao(getServletContext()).listarDisciplinas());
+            req.getRequestDispatcher("/CadastroMentor.jsp").forward(req, resp);
+        } catch (SQLException e) {
+            getServletContext().log("Erro ao listar disciplinas.", e);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
+
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -33,12 +56,18 @@ public class CadastroMentorServlet extends HttpServlet {
         String senha = req.getParameter("senha");
         String confirmarSenha = req.getParameter("confirmarSenha");
         Integer semestre = parseSemestre(req.getParameter("semestre"));
+        Set<Integer> disciplinas = lerDisciplinas(req.getParameterValues("disciplina"));
 
         if (nome.isEmpty() || nome.length() > 150 || email.isEmpty() || email.length() > 150
                 || !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
                 || senha == null || senha.length() < 8 || confirmarSenha == null || !senha.equals(confirmarSenha)
                 || semestre == null) {
             redirecionarErro(req, resp, "dados");
+            return;
+        }
+
+        if (disciplinas.isEmpty()) {
+            redirecionarErro(req, resp, "disciplinas");
             return;
         }
 
@@ -76,7 +105,18 @@ public class CadastroMentorServlet extends HttpServlet {
                 redirecionarErro(req, resp, "email");
                 return;
             }
-            dao.cadastrarMentor(nome, email, SenhaUtil.gerarHash(senha), semestre, fotoUrl);
+            DisciplinaDao disciplinaDao = new DisciplinaDao(getServletContext());
+            for (int disciplinaId : disciplinas) {
+                // recusa disciplina que nao existe ou de semestre acima do semestre do mentor
+                Disciplina escolhida = disciplinaDao.buscarPorId(disciplinaId);
+                if (escolhida == null || escolhida.getSemestre() > semestre) {
+                    apagarFoto(arquivoFoto);
+                    redirecionarErro(req, resp, "disciplinas");
+                    return;
+                }
+            }
+            int mentorId = dao.cadastrarMentor(nome, email, SenhaUtil.gerarHash(senha), semestre, fotoUrl);
+            new MentorDisciplinaDao(getServletContext()).salvar(mentorId, disciplinas);
             resp.sendRedirect(req.getContextPath() + "/LoginArea.jsp?cadastro=sucesso");
         } catch (IllegalStateException e) {
             apagarFoto(arquivoFoto);
@@ -93,9 +133,23 @@ public class CadastroMentorServlet extends HttpServlet {
     private static Integer parseSemestre(String valor) {
         try {
             int semestre = Integer.parseInt(valor);
-            return semestre >= 1 && semestre <= 8 ? semestre : null;
+            return semestre >= 1 && semestre <= 5 ? semestre : null;
         } catch (RuntimeException e) { return null; }
     }
+
+    // Converte os valores marcados (checkboxes "disciplina") em numeros; ignora o que nao for numero.
+    private static Set<Integer> lerDisciplinas(String[] valores) {
+        Set<Integer> ids = new LinkedHashSet<>();
+        if (valores == null) return ids;
+        for (String valor : valores) {
+            try { ids.add(Integer.parseInt(valor.trim())); } catch (RuntimeException e) { /* ignora */ }
+        }
+        return ids;
+    }
+
+
+
+
 
     private static void apagarFoto(Path foto) {
         if (foto == null) return;
@@ -103,6 +157,6 @@ public class CadastroMentorServlet extends HttpServlet {
     }
 
     private void redirecionarErro(HttpServletRequest req, HttpServletResponse resp, String codigo) throws IOException {
-        resp.sendRedirect(req.getContextPath() + "/CadastroMentor.jsp?erro=" + codigo);
+        resp.sendRedirect(req.getContextPath() + "/cadastro-mentor?erro=" + codigo);
     }
 }

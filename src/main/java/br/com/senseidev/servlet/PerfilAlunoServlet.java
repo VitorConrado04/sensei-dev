@@ -69,7 +69,7 @@ public class PerfilAlunoServlet extends HttpServlet {
             int semestre;
             try { semestre = Integer.parseInt(req.getParameter("semestre")); }
             catch (NumberFormatException e) { semestre = 0; }
-            if (semestre < 1 || semestre > 8) {
+            if (semestre < 1 || semestre > 5) {
                 resp.sendRedirect(destino + "?erro=semestre");
                 return;
             }

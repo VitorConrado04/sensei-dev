@@ -8,11 +8,18 @@
 
 <header class="topo">
     <div class="topo-perfil">
-        <svg class="avatar avatar-padrao" style="--tam:64px" viewBox="0 0 64 64" aria-hidden="true">
-            <circle cx="32" cy="32" r="29" fill="none" stroke="#fff" stroke-width="4"/>
-            <circle cx="32" cy="25" r="9" fill="#fff"/>
-            <path d="M13.5 50C15 40 23 35 32 35s17 5 18.5 15a29 29 0 0 1-37 0z" fill="#fff"/>
-        </svg>
+            <c:choose>
+                <c:when test="${not empty mentor.fotoUrl}">
+                    <img class="avatar" style="--tam:64px" src="${ctx}<c:out value='${mentor.fotoUrl}'/>" alt="Sua foto de perfil">
+                </c:when>
+                <c:otherwise>
+                    <svg class="avatar avatar-padrao" style="--tam:64px" viewBox="0 0 64 64" aria-hidden="true">
+                        <circle cx="32" cy="32" r="29" fill="none" stroke="#fff" stroke-width="4"/>
+                        <circle cx="32" cy="25" r="9" fill="#fff"/>
+                        <path d="M13.5 50C15 40 23 35 32 35s17 5 18.5 15a29 29 0 0 1-37 0z" fill="#fff"/>
+                    </svg>
+                </c:otherwise>
+            </c:choose>
         <div class="topo-info">
             <%-- o curso não existe no banco ainda, por isso está fixo --%>
             <span class="topo-curso">${mentor.semestreAtual}º semestre ADS</span>

@@ -30,7 +30,7 @@
     <div class="perfil-topo"><h1 class="titulo-secao">Meu Perfil</h1><button type="button" id="editar-perfil" class="btn-pilula">Editar Perfil</button></div>
     <c:if test="${param.salvo == '1'}"><p class="aviso sucesso" role="status">Perfil atualizado com sucesso.</p></c:if>
     <c:if test="${param.interesses == 'salvos'}"><p class="aviso sucesso" role="status">Disciplinas de interesse atualizadas.</p></c:if>
-    <c:if test="${not empty param.erro}"><p class="aviso erro" role="alert"><c:choose><c:when test="${param.erro == 'semestre'}">Escolha um semestre entre 1 e 8.</c:when><c:when test="${param.erro == 'foto'}">Escolha uma foto PNG ou JPG válida, com até 2 MB.</c:when><c:when test="${param.erro == 'disciplinas'}">Não foi possível salvar as disciplinas. Revise a seleção.</c:when><c:otherwise>Não foi possível salvar o perfil.</c:otherwise></c:choose></p></c:if>
+    <c:if test="${not empty param.erro}"><p class="aviso erro" role="alert"><c:choose><c:when test="${param.erro == 'semestre'}">Escolha um semestre entre 1 e 5.</c:when><c:when test="${param.erro == 'foto'}">Escolha uma foto PNG ou JPG válida, com até 2 MB.</c:when><c:when test="${param.erro == 'disciplinas'}">Não foi possível salvar as disciplinas. Revise a seleção.</c:when><c:otherwise>Não foi possível salvar o perfil.</c:otherwise></c:choose></p></c:if>
     <div class="perfil-aluno-grid">
         <div>
             <div class="interesse-topo"><h2 class="titulo-secao secao-aluno interesse-titulo">Meus dados</h2></div>
@@ -53,7 +53,7 @@
     <dialog id="dialog-edicao" aria-labelledby="titulo-edicao">
         <form action="${ctx}/perfil-aluno" method="post" enctype="multipart/form-data">
             <h2 id="titulo-edicao" class="titulo-secao">Editar Perfil</h2>
-            <label for="semestre">Semestre atual</label><select id="semestre" name="semestre" required><c:forEach var="s" begin="1" end="8"><option value="${s}" ${usuario.semestreAtual == s ? 'selected' : ''}>${s}º semestre</option></c:forEach></select>
+            <label for="semestre">Semestre atual</label><select id="semestre" name="semestre" required><c:forEach var="s" begin="1" end="5"><option value="${s}" ${usuario.semestreAtual == s ? 'selected' : ''}>${s}º semestre</option></c:forEach></select>
             <label for="foto">Nova foto de perfil</label><input type="file" id="foto" name="foto" accept="image/png,image/jpeg">
             <p class="ajuda">PNG ou JPG de até 2 MB. Deixe vazio para manter a foto atual.</p>
             <p id="erro-foto-local" class="aviso erro" role="alert" hidden>A foto deve ter até 2 MB.</p>

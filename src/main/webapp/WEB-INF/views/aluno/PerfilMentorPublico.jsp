@@ -79,17 +79,21 @@
         <c:if test="${param.erro == 'objetivo'}"><p class="solicitacao-erro" role="alert">Informe o objetivo da mentoria em até 500 caracteres.</p></c:if>
         <c:if test="${param.erro == 'horario'}"><p class="solicitacao-erro" role="alert">Não foi possível solicitar nesse horário. Confira os dados e escolha novamente.</p></c:if>
         <c:if test="${dataInvalida}"><p class="solicitacao-erro" role="alert">Escolha uma data válida.</p></c:if>
-        <form class="selecionar-data" action="${ctx}/mentor-publico#solicitar-mentoria" method="get">
-            <input type="hidden" name="id" value="${mentor.id}">
-            <label for="data-mentoria">Data</label>
-            <input id="data-mentoria" name="data" type="date" min="${dataMinima}" value="${dataSelecionada}" required>
-            <label for="duracao-mentoria">Duração</label>
-            <select id="duracao-mentoria" name="duracao">
-                <option value="60" ${duracaoSelecionada == 60 ? 'selected' : ''}>1 hora</option>
-                <option value="120" ${duracaoSelecionada == 120 ? 'selected' : ''}>2 horas</option>
-            </select>
-            <button class="btn-pilula" type="submit">Ver horários</button>
-        </form>
+                <%-- Sem botao: a pagina recarrega sozinha quando a data ou a duracao mudam.
+                     A data so envia quando esta completa e valida (>= dataMinima); assim nao
+                     recarrega no meio da digitacao do ano. --%>
+                <form class="selecionar-data" action="${ctx}/mentor-publico#solicitar-mentoria" method="get">
+                    <input type="hidden" name="id" value="${mentor.id}">
+                    <label for="data-mentoria">Data</label>
+                    <input id="data-mentoria" name="data" type="date" min="${dataMinima}" value="${dataSelecionada}" required
+                           onchange="if (this.value >= this.min) this.form.submit()">
+                    <label for="duracao-mentoria">Duração</label>
+                    <select id="duracao-mentoria" name="duracao"
+                            onchange="if (document.getElementById('data-mentoria').value) this.form.submit()">
+                        <option value="60" ${duracaoSelecionada == 60 ? 'selected' : ''}>1 hora</option>
+                        <option value="120" ${duracaoSelecionada == 120 ? 'selected' : ''}>2 horas</option>
+                    </select>
+                </form>
         <c:if test="${not empty dataSelecionada}">
             <c:choose>
                 <c:when test="${empty horariosMentoria}"><p class="vazio">Não há horários cadastrados para essa data e duração.</p></c:when>

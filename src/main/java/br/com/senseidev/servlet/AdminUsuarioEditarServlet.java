@@ -101,7 +101,7 @@ public class AdminUsuarioEditarServlet extends HttpServlet {
     private static Integer lerSemestre(String valor) {
         try {
             int semestre = Integer.parseInt(valor);
-            return semestre >= 1 && semestre <= 8 ? semestre : null;
+            return semestre >= 1 && semestre <= 5 ? semestre : null;
         } catch (RuntimeException e) {
             return null;
         }

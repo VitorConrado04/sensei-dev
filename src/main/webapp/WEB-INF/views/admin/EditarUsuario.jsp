@@ -17,7 +17,7 @@
     <p class="erro">
         <c:choose>
             <c:when test="${param.erro == 'email'}">Esse e-mail já está cadastrado em outro usuário.</c:when>
-            <c:otherwise>Confira os campos: nome e e-mail válidos e, para aluno, um semestre de 1 a 8.</c:otherwise>
+            <c:otherwise>Confira os campos: nome e e-mail válidos e, para aluno, um semestre de 1 a 5.</c:otherwise>
         </c:choose>
     </p>
 </c:if>
@@ -38,7 +38,7 @@
     <c:if test="${usuario.tipo == 'MENTORANDO'}">
         <label for="semestre">Semestre</label>
         <select id="semestre" name="semestre" required>
-            <c:forEach var="s" begin="1" end="8">
+            <c:forEach var="s" begin="1" end="5">
                 <option value="${s}" ${usuario.semestreAtual == s ? 'selected' : ''}>${s}º semestre</option>
             </c:forEach>
         </select>

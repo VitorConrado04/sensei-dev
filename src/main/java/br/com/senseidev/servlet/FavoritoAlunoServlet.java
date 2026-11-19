@@ -74,7 +74,7 @@ public class FavoritoAlunoServlet extends HttpServlet {
 
     private static String destinoBusca(HttpServletRequest req, int mentorId) {
         StringBuilder destino = new StringBuilder(req.getContextPath()).append("/inicio-aluno");
-        Integer semestre = inteiro(req.getParameter("filtroSemestre"), 1, 8);
+        Integer semestre = inteiro(req.getParameter("filtroSemestre"), 1, 5);
         if (semestre != null) adicionarParametro(destino, "semestre", semestre);
         String[] disciplinas = req.getParameterValues("filtroDisciplina");
         if (disciplinas != null) {

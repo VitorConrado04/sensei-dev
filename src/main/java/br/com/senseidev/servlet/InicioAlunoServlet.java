@@ -47,7 +47,7 @@ public class InicioAlunoServlet extends HttpServlet {
                 return;
             }
             List<Disciplina> disciplinas = new DisciplinaDao(getServletContext()).listarDisciplinas();
-            Integer semestre = inteiroOpcional(req.getParameter("semestre"), 1, 8);
+            Integer semestre = inteiroOpcional(req.getParameter("semestre"), 1, 5);
             Double notaMinima = notaOpcional(req.getParameter("nota"));
             List<Integer> selecionadas = new ArrayList<>();
             Set<Integer> validas = new HashSet<>();
