@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS mentoria (
     data_hora_inicio   TIMESTAMP    NOT NULL,
     data_hora_fim      TIMESTAMP    NOT NULL,
     status             VARCHAR(20)  NOT NULL DEFAULT 'PENDENTE',
+    contato_online     VARCHAR(500),
     criado_em          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_mentoria_mentor

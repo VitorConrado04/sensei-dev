@@ -116,7 +116,8 @@ public class InicializadorBanco implements ServletContextListener {
             // Preenche o tipo de quem ja estava cadastrado, olhando em qual tabela de perfil a pessoa esta
             st.execute("UPDATE usuario SET tipo = 'MENTOR' WHERE id IN (SELECT id FROM mentor_perfil)");
             st.execute("UPDATE usuario SET tipo = 'MENTORANDO' WHERE id IN (SELECT id FROM mentorando_perfil)");
-
+            //Contato online que o mentor informa ao confirmar a sessao (link ou texto livre).
+            st.execute("ALTER TABLE mentoria ADD COLUMN IF NOT EXISTS contato_online VARCHAR(500)");
             criarAdminInicial(c);
             criarDisciplinasBase(c);
             event.getServletContext().log("Banco Sensei.dev verificado; tabelas existentes foram preservadas.");

@@ -79,6 +79,7 @@ CREATE TABLE "mentoria" (
   "data_hora_inicio" timestamp,
   "data_hora_fim" timestamp,
   "status" varchar,
+  "contato_online" varchar,
   "criado_em" timestamp,
   "atualizado_em" timestamp
 );
