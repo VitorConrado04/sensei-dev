@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -49,6 +50,23 @@
                             <p class="mentoria-mentor">Com <c:choose><c:when test="${mentoria.mentorAtivo}"><c:url var="urlMentor" value="/mentor-publico"><c:param name="id" value="${mentoria.mentorId}"/></c:url><a href="${urlMentor}"><c:out value="${mentoria.mentorNome}"/></a></c:when><c:otherwise><c:out value="${mentoria.mentorNome}"/></c:otherwise></c:choose></p>
                             <div class="mentoria-detalhes"><span><c:out value="${mentoria.dataTexto}"/></span><span><c:out value="${mentoria.horaTexto}"/></span><span><c:choose><c:when test="${mentoria.duracaoMinutos == 60}">1 hora</c:when><c:when test="${mentoria.duracaoMinutos == 120}">2 horas</c:when><c:otherwise><c:out value="${mentoria.duracaoMinutos}"/> min</c:otherwise></c:choose></span></div>
                             <div class="mentoria-estado"><span>Status:</span><strong class="estado estado-${mentoria.status}"><c:choose><c:when test="${mentoria.status == 'PENDENTE'}">Pendente</c:when><c:when test="${mentoria.status == 'CONFIRMADA'}">Confirmada</c:when><c:when test="${mentoria.status == 'REALIZADA'}">Realizada</c:when><c:when test="${mentoria.status == 'CANCELADA'}">Cancelada</c:when><c:otherwise><c:out value="${mentoria.status}"/></c:otherwise></c:choose></strong></div>
+
+                        <%-- contato online que o mentor informou ao confirmar (só enquanto estiver confirmada) --%>
+                        <c:if test="${mentoria.status == 'CONFIRMADA' and not empty mentoria.contatoOnline}">
+                            <div class="mentoria-materiais mentoria-contato">
+                            <h4>Contato da sessão</h4>
+                            <ul>
+                                <li>
+                                    <c:choose>
+                                    <c:when test="${fn:startsWith(fn:toLowerCase(mentoria.contatoOnline), 'http://') or fn:startsWith(fn:toLowerCase(mentoria.contatoOnline), 'https://')}">
+                                    <a href="<c:out value='${mentoria.contatoOnline}'/>" target="_blank" rel="noopener noreferrer"><c:out value="${mentoria.contatoOnline}"/></a>
+                                    </c:when>
+                                    <c:otherwise><c:out value="${mentoria.contatoOnline}"/></c:otherwise>
+                                    </c:choose>
+                                   </li>
+                                   </ul>
+                                   </div>
+                                   </c:if>
 
                             <%-- materiais que o mentor vinculou a esta mentoria --%>
                             <c:set var="materiais" value="${materiaisPorMentoria[mentoria.id]}"/>

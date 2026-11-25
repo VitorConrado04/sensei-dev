@@ -606,3 +606,18 @@ a.cal-num:hover { color: var(--texto); }
 }
 .grupo textarea { resize: vertical; }
 .grupo textarea:focus-visible, .grupo select:focus-visible { outline: none; border-color: var(--roxo); background: #e8e8e8; }
+
+
+/* Contato online ao confirmar: o campo ocupa a linha de cima e os botoes ficam embaixo */
+.acoes { flex-wrap: wrap; gap: 0.6rem; }
+.campo-contato {
+    flex: 1 1 100%;
+    padding: 0.6rem 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--campo);
+    color: #1e1c22;
+    font-family: var(--fonte-corpo);
+    font-size: 0.85rem;
+}
+.campo-contato::placeholder { color: #6b6870; }

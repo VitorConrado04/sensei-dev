@@ -83,7 +83,7 @@
             </section>
 
             <h2 class="titulo-secao">Disciplinas</h2>
-            <c:if test="${param.erro == 'disciplinas'}"><p class="subtitulo" role="alert">Não foi possível salvar as disciplinas. Tente novamente.</p></c:if>
+            <c:if test="${param.erro == 'disciplinas'}"><p class="subtitulo" role="alert">Escolha pelo menos uma disciplina, do seu semestre ou de semestres anteriores.</p></c:if>
             <section class="cartao" aria-label="Disciplinas que domina">
                 <%-- modo leitura: só as que o mentor já escolheu --%>
                 <div class="so-leitura">
@@ -105,10 +105,12 @@
                      servlet como "disciplina", com o id da disciplina como valor --%>
                 <div class="opcoes-disciplinas so-edicao">
                     <c:forEach var="d" items="${todasDisciplinas}">
+                    <c:if test="${d.semestre <= mentor.semestreAtual}">
                         <label class="opcao-disciplina">
                             <input type="checkbox" name="disciplina" value="${d.id}" ${marcadas[d.id] ? 'checked' : ''}>
                             <span><c:out value="${d.nome}"/><small>${d.semestre}º semestre</small></span>
                         </label>
+                     </c:if>
                     </c:forEach>
                 </div>
             </section>

@@ -113,12 +113,18 @@ public class MentorInicioServlet extends HttpServlet {
         int mentorId = SessaoUtil.obterMentorId(req);
         String id = req.getParameter("id");
         String acao = req.getParameter("acao");
+        boolean erroContato = false;
 
         if (id != null && acao != null) {
             try {
                 int sessaoId = Integer.parseInt(id);
                 MentorDao dao = new MentorDao(getServletContext());
-                if ("confirmar".equals(acao)) dao.atualizarStatusSessao(mentorId, sessaoId, "CONFIRMADA");
+                if ("confirmar".equals(acao)){
+                    String contato = req.getParameter("contato");
+                    contato = contato == null ? "" : contato.trim();
+                    if (contato.isEmpty() || contato.length() > 500) erroContato = true;
+                    else dao.confirmarSessao(mentorId, sessaoId, contato);
+                }
                 else if ("cancelar".equals(acao)) dao.atualizarStatusSessao(mentorId, sessaoId, "CANCELADA");
                 else if ("realizar".equals(acao)) dao.marcarComoRealizada(mentorId, sessaoId);
             } catch (NumberFormatException ignored) {
@@ -134,6 +140,7 @@ public class MentorInicioServlet extends HttpServlet {
         if (visao != null && ("dia".equals(visao) || "semana".equals(visao) || "mes".equals(visao)) && data != null) {
             destino += "?visao=" + visao + "&data=" + data;
         }
+        if (erroContato) destino += (destino.contains("?") ? "&" : "?") + "erro=contato";
         resp.sendRedirect(destino);
     }
 

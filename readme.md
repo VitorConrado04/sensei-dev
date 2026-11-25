@@ -130,7 +130,7 @@ Por exemplo:
 O modelo relacional completo está descrito em DBML na pasta [`escopo_db`](./escopo_db):
 
 - **`banco_relacional.dbml`** — definição de todas as tabelas, atributos, chaves primárias/estrangeiras e relacionamentos.
-- **`banco_relacional.sql`** — script SQL (PostgreSQL) gerado automaticamente a partir do `.dbml`, pronto pra referência ou adaptação quando formos utilizar o H2.
+- **`banco_relacional.sql`** — script SQL (PostgreSQL) gerado automaticamente a partir do `.dbml`, pronto pra referência.O banco em uso é o H2, criado pelo `InicializadorBanco`; a versão do script para H2 está em `banco_h2.sql`.
 
 ### Como visualizar o diagrama 
 
@@ -252,7 +252,8 @@ O modelo relacional original está em `escopo_db/banco_h2.sql`.
 2. Na raiz do projeto, executar `mvn tomcat7:run` (ou `tomcat7:run` no painel Maven).
    Atenção: o goal é `run`, e `deploy` não funciona.
 3. Aplicação: http://localhost:8080
-4. Console do H2: http://localhost:8080/console (driver `org.h2.Driver`,
+4. Console do H2(só para o administrador com o login feito): http://localhost:8080/console (driver `org.h2.Driver`,
+
    URL `jdbc:h2:./db/sensei`, usuário `sa`, senha `sa`). O console abre com
    `jdbc:h2:~/test` preenchido, então é preciso trocar a URL.
 
@@ -276,3 +277,14 @@ Login inicial do administrador: `admin@sensei.dev` / `admin12345`
 ### Conta do usuário
 Mentor e mentorando editam nome, e-mail, semestre e senha em `/conta`.
 O usuário editado é sempre o da sessão.
+
+
+### Semestres e disciplinas
+- O curso é Análise e Desenvolvimento de Sistemas, com **5 semestres** (de 1º a 5º). Esse limite vale no cadastro, na conta, no perfil, na busca e na área do administrador.
+- As **31 disciplinas** da grade real (por semestre) são criadas ao subir o Tomcat. O administrador pode criar, editar e excluir.
+- **Mentor:** precisa escolher **pelo menos uma disciplina**, e só do **semestre em que está ou de semestres anteriores**. A regra vale no cadastro e em "Editar Perfil", validada no navegador e também no servidor.
+- **Mentorando:** na busca, informa o semestre e escolhe entre as disciplinas daquele semestre, além de filtrar por nota mínima.
+
+
+### Contato da sessão
+Ao confirmar uma mentoria, o mentor informa obrigatoriamente o contato (link da chamada ou WhatsApp). O mentorando vê esse contato em "Minhas mentorias" enquanto a sessão estiver confirmada. Links `http://` e `https://` viram links clicáveis. Se o aluno reagendar, a sessão volta a ficar pendente e o mentor informa o contato de novo ao confirmar.

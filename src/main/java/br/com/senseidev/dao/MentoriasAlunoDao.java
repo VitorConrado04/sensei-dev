@@ -16,7 +16,7 @@ import java.util.List;
 public class MentoriasAlunoDao {
     private static final String COLUNAS = "SELECT m.id, m.mentor_id, u.nome AS mentor_nome, " +
             "u.status AS mentor_status, d.nome AS disciplina, m.objetivo, " +
-            "m.data_hora_inicio, m.data_hora_fim, m.status, a.nota_final " +
+            "m.data_hora_inicio, m.data_hora_fim, m.status, a.nota_final, m.contato_online " +
             "FROM mentoria m JOIN usuario u ON u.id = m.mentor_id " +
             "JOIN disciplina d ON d.id = m.disciplina_id " +
             "LEFT JOIN avaliacao a ON a.mentoria_id = m.id ";
@@ -60,7 +60,7 @@ public class MentoriasAlunoDao {
                             fim.toLocalDateTime(),
                             rs.getString("status")
                     );
-
+                    mentoria.setContatoOnline(rs.getString("contato_online"));
                     double nota = rs.getDouble("nota_final");
                     if (!rs.wasNull()) {
                         mentoria.setNota(nota);

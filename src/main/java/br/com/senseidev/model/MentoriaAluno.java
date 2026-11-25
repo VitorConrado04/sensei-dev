@@ -19,6 +19,7 @@ public class MentoriaAluno {
     private final LocalDateTime fim;
     private final String status;
     private double nota;
+    private String contatoOnline;
 
     public MentoriaAluno(int id, int mentorId, String mentorNome, boolean mentorAtivo,
                          String disciplina, String objetivo, LocalDateTime inicio,
@@ -58,4 +59,13 @@ public class MentoriaAluno {
     public void setNota(double nota) {
         this.nota = nota;
     }
+
+    public String getContatoOnline() {
+        return contatoOnline;
+    }
+
+    public void setContatoOnline(String contatoOnline) {
+        this.contatoOnline = contatoOnline;
+    }
+
 }

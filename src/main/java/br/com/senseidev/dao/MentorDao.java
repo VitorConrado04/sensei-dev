@@ -492,6 +492,21 @@ public class MentorDao {
         }
     }
 
+    /** Confirma uma sessão PENDENTE e grava o contato online (link ou texto) que o aluno vai ver. */
+    public boolean confirmarSessao(int mentorId, int sessaoId, String contato) throws SQLException {
+        String sql = "UPDATE mentoria SET status='CONFIRMADA', contato_online=?, atualizado_em=CURRENT_TIMESTAMP "
+                + "WHERE id=? AND mentor_id=? AND status='PENDENTE'";
+        try (Connection c = Conexao.abrir(contexto); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, contato);
+            ps.setInt(2, sessaoId);
+            ps.setInt(3, mentorId);
+            if (ps.executeUpdate() != 1) return false;
+            NotificacaoDao.avisar(c, sessaoId, "MENTORANDO", "CONFIRMADA",
+                    "{nome} confirmou a sua mentoria de {quando}.");
+            return true;
+        }
+    }
+
     /** Marca como REALIZADA uma sessão confirmada que já começou. Devolve false se não foi possível. */
     public boolean marcarComoRealizada(int mentorId, int sessaoId) throws SQLException {
         String sql = "UPDATE mentoria SET status='REALIZADA', atualizado_em=CURRENT_TIMESTAMP "

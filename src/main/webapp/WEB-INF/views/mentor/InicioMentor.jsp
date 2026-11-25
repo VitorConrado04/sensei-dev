@@ -187,6 +187,7 @@
     <%-- coluna da direita: sessões que o mentor ainda precisa confirmar ou já confirmou --%>
     <section aria-labelledby="t-proximas">
         <h2 id="t-proximas" class="titulo-secao">Próximas sessões</h2>
+        <c:if test="${param.erro == 'contato'}"><p class="erro" role="alert">Informe o contato da sessão (link da chamada ou WhatsApp) para confirmar.</p></c:if>
         <ul class="lista-sessoes">
             <c:forEach var="s" items="${proximas}">
                 <li class="bloco">
@@ -217,10 +218,12 @@
                                 </c:choose>
                             </c:when>
                             <c:otherwise>
+                            <input type="text" name="contato" class="campo-contato" maxlength="500" required
+                                placeholder="Link da chamada ou WhatsApp" aria-label="Contato online da sessão">
                                 <button type="submit" name="acao" value="confirmar" class="pilula-acao confirmar">Confirmar</button>
                             </c:otherwise>
                         </c:choose>
-                        <button type="submit" name="acao" value="cancelar" class="pilula-acao cancelar"
+                        <button type="submit" name="acao" value="cancelar" class="pilula-acao cancelar" formnovalidate
                                 onclick="return confirm('Cancelar esta sessão?')">Cancelar</button>
                     </form>
                 </li>

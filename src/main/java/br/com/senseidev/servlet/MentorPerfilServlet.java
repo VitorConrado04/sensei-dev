@@ -4,6 +4,7 @@ import br.com.senseidev.auth.SessaoUtil;
 import br.com.senseidev.dao.DisciplinaDao;
 import br.com.senseidev.dao.MentorDao;
 import br.com.senseidev.dao.MentorDisciplinaDao;
+import br.com.senseidev.model.Disciplina;
 import br.com.senseidev.model.Mentor;
 
 import javax.servlet.ServletException;
@@ -79,6 +80,22 @@ public class MentorPerfilServlet extends HttpServlet {
         try {
             Mentor atual = dao.buscarMentor(mentorId);
             if (atual == null) throw new ServletException("O perfil deste mentor não foi encontrado.");
+
+            // Regra: pelo menos 1 disciplina, e so do semestre do mentor ou anteriores
+            // (a mesma regra do cadastro). Se algo estiver fora, nao grava nada.
+            if (disciplinaIds.isEmpty()) {
+                resp.sendRedirect(destino + "?erro=disciplinas");
+                return;
+            }
+            int semestreMentor = atual.getSemestreAtual() == null ? 0 : atual.getSemestreAtual();
+            DisciplinaDao disciplinaDao = new DisciplinaDao(getServletContext());
+            for (int disciplinaId : disciplinaIds) {
+                Disciplina escolhida = disciplinaDao.buscarPorId(disciplinaId);
+                if (escolhida == null || escolhida.getSemestre() > semestreMentor) {
+                    resp.sendRedirect(destino + "?erro=disciplinas");
+                    return;
+                }
+            }
 
             String descricao = req.getParameter("descricao");
             if (descricao == null || descricao.trim().isEmpty()) descricao = atual.getDescricao();
