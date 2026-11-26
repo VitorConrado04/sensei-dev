@@ -69,7 +69,7 @@ Principais funcionalidades:
 
 - Favoritos: salvar mentores para consultar posteriormente.
 
-- Notificações: receber lembretes e atualizações sobre suas mentorias.
+- Notificações: receber atualizações sobre suas mentorias (confirmações, cancelamentos e sessões realizadas).
 
 ## 3. Agenda para marcação de mentorias
 
@@ -81,6 +81,9 @@ O app seguira o seguinte fluxo:
 
 Mentor define disponibilidade → Mentorando escolhe horário → Solicitação é criada → Mentor confirma → Sessão é agendada
 
+O mentor confirma cada solicitação manualmente e, ao confirmar, informa o contato da chamada (link ou WhatsApp).
+Assim o mentorando sempre sabe onde a sessão vai acontecer.
+
 A agenda deve permitir:
 
 - Visualização por dia, semana e mês.
@@ -89,8 +92,6 @@ A agenda deve permitir:
 - Escolha da duração da sessão.
 - Agendamento e cancelamento.
 - Reagendamento.
-- Confirmação automática da sessão, caso essa seja a regra adotada.
-- Lembretes antes da mentoria.
 - Histórico de horários ocupados e sessões realizadas.
 - Impedir conflitos de horário.
 
@@ -158,7 +159,7 @@ O arquivo `.dbml` não é só texto — ele pode ser visualizado como diagrama e
 - `bloqueio_horario` — exceções pontuais de indisponibilidade
 
 **Sessões**
-- `mentoria` — a solicitação/sessão em si (mentor, mentorando, disciplina, objetivo, data/hora, status)
+- `mentoria` — a solicitação/sessão em si (mentor, mentorando, disciplina, objetivo, data/hora, status e contato online da chamada)
 - `avaliacao` — avaliação pós-sessão por critério (clareza, domínio, pontualidade, capacidade de orientar, experiência geral)
 
 **Complementos**
@@ -212,7 +213,7 @@ Sessões futuras, realizadas e canceladas do mentorando.
 
 ![Notificações do mentorando](imagens/Tela%20Notifica%C3%A7%C3%B5es%20Mentorado.png)
 
-Central de notificações e lembretes do mentorando.
+Central de notificações do mentorando.
 
 ![Perfil do mentorando](imagens/Tela%20Perfil%20Mentorado.png)
 
